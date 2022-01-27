@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 /** This is a demo program showing how to use Mecanum control with the MecanumDrive class. */
 public class Robot extends TimedRobot {
@@ -16,17 +16,17 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
 
-  private static final int kJoystickChannel = 0;
+  private static final int stickChannel = 1;
 
   private MecanumDrive m_robotDrive;
   private Joystick m_stick;
 
   @Override
   public void robotInit() {
-    PWMSparkMax frontLeft = new PWMSparkMax(kFrontLeftChannel);
-    PWMSparkMax rearLeft = new PWMSparkMax(kRearLeftChannel);
-    PWMSparkMax frontRight = new PWMSparkMax(kFrontRightChannel);
-    PWMSparkMax rearRight = new PWMSparkMax(kRearRightChannel);
+    Spark frontLeft = new Spark(kFrontLeftChannel);
+    Spark rearLeft = new Spark(kRearLeftChannel);
+    Spark frontRight = new Spark(kFrontRightChannel);
+    Spark rearRight = new Spark(kRearRightChannel);
 
     // Invert the right side motors.
     // You may need to change or remove this to match your robot.
@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
-    m_stick = new Joystick(kJoystickChannel);
+    m_stick = new Joystick(stickChannel);
   }
 
   @Override
