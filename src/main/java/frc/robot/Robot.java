@@ -16,7 +16,7 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
 
-  private static final int stickChannel = 1;
+  private static final int stickChannel = 0;
 
   private MecanumDrive m_robotDrive;
   private Joystick m_stick;
