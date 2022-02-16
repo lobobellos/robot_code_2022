@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -20,8 +22,10 @@ public class Robot extends TimedRobot {
   private static double stickX = 0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
+  private static double gyroAngle = 0;
 
   private static final int stickChannel = 0;
+  private static final boolean useGyro = true;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
@@ -29,6 +33,7 @@ public class Robot extends TimedRobot {
 
   private MecanumDrive m_robotDrive;
   private Joystick stick;
+  private ADXRS450_Gyro gyro;
 
   @Override
   public void robotInit() {
@@ -45,6 +50,9 @@ public class Robot extends TimedRobot {
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
     stick = new Joystick(stickChannel);
+    gyro = new ADXRS450_Gyro();
+
+    gyro.calibrate();
   }
 
   @Override
@@ -55,7 +63,7 @@ public class Robot extends TimedRobot {
 
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
-    m_robotDrive.driveCartesian(stickY, stickX, stickZ, 0.0);
+    m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
   }
 
   public void applyDeadzone(){
@@ -75,5 +83,10 @@ public class Robot extends TimedRobot {
 		}else{
 			stickZ = stick.getZ();
 		}
+    if(useGyro){
+      gyroAngle = gyro.getAngle();
+    }else{
+      gyroAngle = 0.0;
+    }
 	}
 }
