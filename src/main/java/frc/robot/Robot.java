@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
 	private static double stickY = 0;
 	private static double stickZ = 0;
   private static double gyroAngle = 0;
+  private static double throttle;
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
@@ -67,21 +68,24 @@ public class Robot extends TimedRobot {
   }
 
   public void applyDeadzone(){
+    //parse throttle
+    throttle = ((-stick.getThrottle())+1)/2;
+
 		//apply a deadzone
 		if( Math.abs(stick.getX()) < deadZoneX){
 			stickX = 0.0;
 		}else{
-			stickX = stick.getX();
+			stickX = stick.getX()*throttle;
 		}
 		if( Math.abs(stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
-			stickY = stick.getY();
+			stickY = stick.getY()*throttle;
 		}
-		if( Math.abs(stick.getZ()) < deadZoneZ || stick.getRawButton(0) ){
+		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(0) ){
 			stickZ = 0.0;
 		}else{
-			stickZ = stick.getZ();
+			stickZ = stick.getZ()*throttle;
 		}
     if(useGyro){
       gyroAngle = gyro.getAngle();
