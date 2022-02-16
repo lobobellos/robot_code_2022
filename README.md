@@ -3,12 +3,14 @@ robot code for the 2022 FRC season.
 
 Drive base using mecanum wheels.
 
-# to deploy
+# To deploy
 WPILib: Deploy robot code
 
-# to drive
-joystick y-axis: move vertically <br>
-joystick x-axis: move horisontal <br>
-joystick z-axis: rotate around z-axis<br>
+# To drive
+Joystick y-axis: move vertically <br>
+Joystick x-axis: move horisontal <br>
+Joystick z-axis: rotate around z-axis<br>
 <br>
-joystick thumb button: allows z-axis rotation when pressed<br>
+Joystick thumb button: allows z-axis rotation when pressed<br>
+<br>
+Joystick side button: toggle between robot-oriented and field oriented driving <br>
