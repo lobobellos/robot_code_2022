@@ -16,7 +16,16 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
 
+
+  private static double stickX = 0;
+	private static double stickY = 0;
+	private static double stickZ = 0;
+
   private static final int stickChannel = 0;
+
+  private static final double deadZoneX = 0;
+	private static final double deadZoneY = 0;
+	private static final double deadZoneZ = 0;
 
   private MecanumDrive m_robotDrive;
   private Joystick m_stick;
@@ -40,8 +49,31 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    //get inputs from joystick and use them
+    applyDeadzone();
+
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
-    m_robotDrive.driveCartesian(m_stick.getX(), m_stick.getY(), m_stick.getZ(), 0.0);
+    m_robotDrive.driveCartesian(stickY, stickX, stickZ, 0.0);
   }
+
+  public void applyDeadzone(){
+		//apply a deadzone
+		if( Math.abs(m_stick.getX()) < deadZoneX){
+			stickX = 0.0;
+		}else{
+			stickX = m_stick.getX();
+		}
+		if( Math.abs(m_stick.getY()) < deadZoneY){
+			stickY = 0.0;
+		}else{
+			stickY = m_stick.getY();
+		}
+		if( Math.abs(m_stick.getZ()) < deadZoneZ){
+			stickZ = 0.0;
+		}else{
+			stickZ = m_stick.getZ();
+		}
+	}
 }
