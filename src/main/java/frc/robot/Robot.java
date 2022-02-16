@@ -17,9 +17,10 @@ public class Robot extends TimedRobot {
   private static final int kRearRightChannel = 0;
 
 
-  private static double stickX = 0;
+  private static double stickX = 0.0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
+  public static double throttle = 0;
 
   private static final int stickChannel = 0;
 
@@ -59,21 +60,24 @@ public class Robot extends TimedRobot {
   }
 
   public void applyDeadzone(){
+
+    throttle = ((-m_stick.getThrottle()) +1)/2;
+
 		//apply a deadzone
 		if( Math.abs(m_stick.getX()) < deadZoneX){
 			stickX = 0.0;
 		}else{
-			stickX = m_stick.getX();
+			stickX = m_stick.getX()*throttle;
 		}
 		if( Math.abs(m_stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
-			stickY = m_stick.getY();
+			stickY = -m_stick.getY()*throttle;
 		}
 		if( Math.abs(m_stick.getZ()) < deadZoneZ){
 			stickZ = 0.0;
 		}else{
-			stickZ = m_stick.getZ();
+			stickZ = m_stick.getZ()*throttle;
 		}
 	}
 }
