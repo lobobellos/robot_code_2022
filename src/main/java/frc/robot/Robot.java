@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 	private static final double deadZoneZ = 0;
 
   private MecanumDrive m_robotDrive;
-  private Joystick m_stick;
+  private Joystick stick;
 
   @Override
   public void robotInit() {
@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
-    m_stick = new Joystick(stickChannel);
+    stick = new Joystick(stickChannel);
   }
 
   @Override
@@ -60,20 +60,20 @@ public class Robot extends TimedRobot {
 
   public void applyDeadzone(){
 		//apply a deadzone
-		if( Math.abs(m_stick.getX()) < deadZoneX){
+		if( Math.abs(stick.getX()) < deadZoneX){
 			stickX = 0.0;
 		}else{
-			stickX = m_stick.getX();
+			stickX = stick.getX();
 		}
-		if( Math.abs(m_stick.getY()) < deadZoneY){
+		if( Math.abs(stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
-			stickY = m_stick.getY();
+			stickY = stick.getY();
 		}
-		if( Math.abs(m_stick.getZ()) < deadZoneZ){
+		if( Math.abs(stick.getZ()) < deadZoneZ || stick.getRawButton(0) ){
 			stickZ = 0.0;
 		}else{
-			stickZ = m_stick.getZ();
+			stickZ = stick.getZ();
 		}
 	}
 }
