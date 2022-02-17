@@ -22,12 +22,8 @@ public class Robot extends TimedRobot {
   private static double stickX = 0.0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
-<<<<<<< HEAD
-  public static double throttle = 0;
-=======
   private static double gyroAngle = 0;
   private static double throttle;
->>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
@@ -72,41 +68,24 @@ public class Robot extends TimedRobot {
   }
 
   public void applyDeadzone(){
-<<<<<<< HEAD
-
-    throttle = ((-m_stick.getThrottle()) +1)/2;
-=======
     //parse throttle
     throttle = ((-stick.getThrottle())+1)/2;
->>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 
 		//apply a deadzone
 		if( Math.abs(stick.getX()) < deadZoneX){
 			stickX = 0.0;
 		}else{
-<<<<<<< HEAD
-			stickX = m_stick.getX()*throttle;
-=======
 			stickX = stick.getX()*throttle;
->>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
 		if( Math.abs(stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
-<<<<<<< HEAD
-			stickY = -m_stick.getY()*throttle;
-=======
 			stickY = stick.getY()*throttle;
->>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
 		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(0) ){
 			stickZ = 0.0;
 		}else{
-<<<<<<< HEAD
-			stickZ = m_stick.getZ()*throttle;
-=======
 			stickZ = stick.getZ()*throttle;
->>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
     if(useGyro){
       gyroAngle = gyro.getAngle();
