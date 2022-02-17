@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -20,16 +22,23 @@ public class Robot extends TimedRobot {
   private static double stickX = 0.0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
+<<<<<<< HEAD
   public static double throttle = 0;
+=======
+  private static double gyroAngle = 0;
+  private static double throttle;
+>>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 
   private static final int stickChannel = 0;
+  private static final boolean useGyro = true;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
 	private static final double deadZoneZ = 0;
 
   private MecanumDrive m_robotDrive;
-  private Joystick m_stick;
+  private Joystick stick;
+  private ADXRS450_Gyro gyro;
 
   @Override
   public void robotInit() {
@@ -45,7 +54,10 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
-    m_stick = new Joystick(stickChannel);
+    stick = new Joystick(stickChannel);
+    gyro = new ADXRS450_Gyro();
+
+    gyro.calibrate();
   }
 
   @Override
@@ -56,28 +68,50 @@ public class Robot extends TimedRobot {
 
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
-    m_robotDrive.driveCartesian(stickY, stickX, stickZ, 0.0);
+    m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
   }
 
   public void applyDeadzone(){
+<<<<<<< HEAD
 
     throttle = ((-m_stick.getThrottle()) +1)/2;
+=======
+    //parse throttle
+    throttle = ((-stick.getThrottle())+1)/2;
+>>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 
 		//apply a deadzone
-		if( Math.abs(m_stick.getX()) < deadZoneX){
+		if( Math.abs(stick.getX()) < deadZoneX){
 			stickX = 0.0;
 		}else{
+<<<<<<< HEAD
 			stickX = m_stick.getX()*throttle;
+=======
+			stickX = stick.getX()*throttle;
+>>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
-		if( Math.abs(m_stick.getY()) < deadZoneY){
+		if( Math.abs(stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
+<<<<<<< HEAD
 			stickY = -m_stick.getY()*throttle;
+=======
+			stickY = stick.getY()*throttle;
+>>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
-		if( Math.abs(m_stick.getZ()) < deadZoneZ){
+		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(0) ){
 			stickZ = 0.0;
 		}else{
+<<<<<<< HEAD
 			stickZ = m_stick.getZ()*throttle;
+=======
+			stickZ = stick.getZ()*throttle;
+>>>>>>> 95b7f50b1977ae6f279302c88217e5ea444824a2
 		}
+    if(useGyro){
+      gyroAngle = gyro.getAngle();
+    }else{
+      gyroAngle = 0.0;
+    }
 	}
 }
