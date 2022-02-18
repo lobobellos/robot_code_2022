@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
 		if( Math.abs(stick.getY()) < deadZoneY){
 			stickY = 0.0;
 		}else{
-			stickY = stick.getY()*throttle;
+			stickY = -stick.getY()*throttle;
 		}
 		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(1) ){
 			stickZ = 0.0;
