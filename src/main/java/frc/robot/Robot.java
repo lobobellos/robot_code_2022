@@ -91,8 +91,10 @@ public class Robot extends TimedRobot {
       safeModeToggle = false;
       if(safeMode){
         safeMode = false;
+        System.out.println("safeMode off");
       }else{
         safeMode = true;
+        System.out.println("safeMode on");
       }
     }else if(stick.getRawButton(7) == false){
       safeModeToggle = true;
@@ -105,7 +107,6 @@ public class Robot extends TimedRobot {
       //parse throttle (min:0.26 , max:1)
       throttle = ((-stick.getThrottle())+1.7)/2.7;
     }
-    System.out.println( "throttle is: "+throttle);
   }
 
   public void applyDeadzone(){
@@ -139,14 +140,16 @@ public class Robot extends TimedRobot {
 
   public void toggleIntake(){
     //Toggles intake motor
-    if(intakeToggle && stick.getRawButton(7)){
+    if(intakeToggle && stick.getRawButton(8)){
       intakeToggle = false;
       if(intakeRunning){
         intakeRunning = false;
         m_intake.set(0);
+        System.out.println("intake off");
       }else{
         intakeRunning = true;
         m_intake.set(1);
+        System.out.println("intake on");
       }
     }else if(stick.getRawButton(7) == false){
       intakeToggle = true;
