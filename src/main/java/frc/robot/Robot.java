@@ -79,6 +79,9 @@ public class Robot extends TimedRobot {
     //get inputs from joystick and use them
     applyDeadzone();
 
+    //toggle intake
+    toggleIntake();
+
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
     m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
