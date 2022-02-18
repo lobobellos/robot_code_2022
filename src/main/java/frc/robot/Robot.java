@@ -83,7 +83,6 @@ public class Robot extends TimedRobot {
       }else{
         safeMode = true;
       }
-      System.out.println("i'm in  "+safeMode);
     }else if(stick.getRawButton(7) == false){
       toggle = true;
     }
@@ -95,7 +94,7 @@ public class Robot extends TimedRobot {
       //parse throttle (min:0.26 , max:1)
       throttle = ((-stick.getThrottle())+1.7)/2.7;
     }
-    System.out.println(throttle);
+    System.out.println( "throttle is: "+throttle);
   }
 
   public void applyDeadzone(){
