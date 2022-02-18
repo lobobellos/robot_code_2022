@@ -132,6 +132,7 @@ public class Robot extends TimedRobot {
 		}else{
 			stickZ = stick.getZ()*throttle;
 		}
+
     //applies gyro 
     if(useGyro){
       gyroAngle = gyro.getAngle();
@@ -154,7 +155,7 @@ public class Robot extends TimedRobot {
         m_intake.set(1);
         System.out.println("intake on");
       }
-    }else if(stick.getRawButton(7) == false){
+    }else if(stick.getRawButton(8) == false){
       intakeToggle = true;
     }
   }
