@@ -26,8 +26,10 @@ public class Robot extends TimedRobot {
   private static double throttle;
 
   private static final int stickChannel = 0;
+
   private static final boolean useGyro = true;
-  private static final boolean safeMode = false;
+  private static boolean safeMode = false;
+  private static boolean toggle = true;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
@@ -72,6 +74,20 @@ public class Robot extends TimedRobot {
   }
 
   public void applySafeMode(){
+
+    //toggles safe mode
+    if(toggle && stick.getRawButton(7)){
+      toggle = false;
+      if(safeMode){
+        safeMode = false;
+      }else{
+        safeMode = true;
+      }
+      System.out.println("i'm in  "+safeMode);
+    }else if(stick.getRawButton(7) == false){
+      toggle = true;
+    }
+
     //applies safe mode if nessecary
     if(safeMode){
       throttle = 0.3;
@@ -79,6 +95,7 @@ public class Robot extends TimedRobot {
       //parse throttle (min:0.26 , max:1)
       throttle = ((-stick.getThrottle())+1.7)/2.7;
     }
+    System.out.println(throttle);
   }
 
   public void applyDeadzone(){
