@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
+  private static final boolean safeMode = false;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
@@ -59,6 +60,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    //applies safe mode if nessecary
+    applySafeMode();
+
     //get inputs from joystick and use them
     applyDeadzone();
 
@@ -67,9 +71,19 @@ public class Robot extends TimedRobot {
     m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
   }
 
+  public void applySafeMode(){
+    //applies safe mode if nessecary
+    if(safeMode){
+      throttle = 0.3;
+    }else{
+      //parse throttle (min:0.26 , max:1)
+      throttle = ((-stick.getThrottle())+1.7)/2.7;
+    }
+  }
+
   public void applyDeadzone(){
-    //parse throttle
-    throttle = ((-stick.getThrottle())+1)/2;
+    //parse throttle (min:0.26 , max:1)
+    throttle = ((-stick.getThrottle())+1.7)/2.7;
 
 		//apply a deadzone
 		if( Math.abs(stick.getX()) < deadZoneX){
@@ -82,15 +96,17 @@ public class Robot extends TimedRobot {
 		}else{
 			stickY = -stick.getY()*throttle;
 		}
-		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(1) ){
+		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(2) ){
 			stickZ = 0.0;
 		}else{
 			stickZ = stick.getZ()*throttle;
 		}
+    //applies gyro 
     if(useGyro){
       gyroAngle = gyro.getAngle();
     }else{
       gyroAngle = 0.0;
     }
+    
 	}
 }
