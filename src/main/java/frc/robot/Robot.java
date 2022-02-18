@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
 
+  private static final int intakeChannel = 4;
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
@@ -28,8 +29,14 @@ public class Robot extends TimedRobot {
   private static final int stickChannel = 0;
 
   private static final boolean useGyro = true;
+
+  //vars used for toggling safemode
   private static boolean safeMode = false;
-  private static boolean toggle = true;
+  private static boolean safeModeToggle = true;
+
+  //var used for toggling intake
+  private static boolean intakeRunning = false;
+  private static boolean intakeToggle = true;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
@@ -38,6 +45,7 @@ public class Robot extends TimedRobot {
   private MecanumDrive m_robotDrive;
   private Joystick stick;
   private ADXRS450_Gyro gyro;
+  private Spark m_intake;
 
   @Override
   public void robotInit() {
@@ -45,6 +53,9 @@ public class Robot extends TimedRobot {
     Spark rearLeft = new Spark(kRearLeftChannel);
     Spark frontRight = new Spark(kFrontRightChannel);
     Spark rearRight = new Spark(kRearRightChannel);
+    m_intake = new Spark(intakeChannel);
+
+    //m_intake.close();
 
     // Invert the right side motors.
     // You may need to change or remove this to match your robot.
@@ -75,16 +86,16 @@ public class Robot extends TimedRobot {
 
   public void applySafeMode(){
 
-    //toggles safe mode
-    if(toggle && stick.getRawButton(7)){
-      toggle = false;
+    //Toggles safe mode
+    if(safeModeToggle && stick.getRawButton(7)){
+      safeModeToggle = false;
       if(safeMode){
         safeMode = false;
       }else{
         safeMode = true;
       }
     }else if(stick.getRawButton(7) == false){
-      toggle = true;
+      safeModeToggle = true;
     }
 
     //applies safe mode if nessecary
@@ -125,4 +136,20 @@ public class Robot extends TimedRobot {
     }
     
 	}
+
+  public void toggleIntake(){
+    //Toggles intake motor
+    if(intakeToggle && stick.getRawButton(7)){
+      intakeToggle = false;
+      if(intakeRunning){
+        intakeRunning = false;
+        m_intake.set(0);
+      }else{
+        intakeRunning = true;
+        m_intake.set(1);
+      }
+    }else if(stick.getRawButton(7) == false){
+      intakeToggle = true;
+    }
+  }
 }
