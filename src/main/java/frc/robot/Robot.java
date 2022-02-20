@@ -19,6 +19,8 @@ public class Robot extends TimedRobot {
   private static final int kRearRightChannel = 0;
 
   private static final int intakeChannel = 4;
+  private static final int l_bottomChannel = 5;
+  private static final int l_topChannel = 6;
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
@@ -38,6 +40,10 @@ public class Robot extends TimedRobot {
   private static boolean intakeRunning = false;
   private static boolean intakeToggle = true;
 
+  //var used for toggling intake
+  private static boolean shooterRunning = false;
+  private static boolean shooterToggle = true;
+
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
 	private static final double deadZoneZ = 0;
@@ -45,15 +51,23 @@ public class Robot extends TimedRobot {
   private MecanumDrive m_robotDrive;
   private Joystick stick;
   private ADXRS450_Gyro gyro;
+
   private Spark m_intake;
+
+  private Spark m_launcherBottom;
+  private Spark m_launcherTop;
 
   @Override
   public void robotInit() {
+    //declare motor controllers
     Spark frontLeft = new Spark(kFrontLeftChannel);
     Spark rearLeft = new Spark(kRearLeftChannel);
     Spark frontRight = new Spark(kFrontRightChannel);
     Spark rearRight = new Spark(kRearRightChannel);
+
     m_intake = new Spark(intakeChannel);
+    m_launcherBottom = new Spark(l_bottomChannel);
+    m_launcherTop = new Spark(l_topChannel);
 
     //m_intake.close();
 
@@ -81,6 +95,9 @@ public class Robot extends TimedRobot {
 
     //toggle intake
     toggleIntake();
+
+    //toggle launcher
+    toggleShooter();
 
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
@@ -159,4 +176,25 @@ public class Robot extends TimedRobot {
       intakeToggle = true;
     }
   }
+
+  public void toggleShooter(){
+    //Toggles shooter motors
+    if(shooterToggle && stick.getRawButton(1)){
+      shooterToggle = false;
+      if(shooterRunning){
+        shooterRunning = false;
+        m_launcherBottom.set(0);
+        m_launcherTop.set(0);
+        System.out.println("shooter off");
+      }else{
+        shooterRunning = true;
+        m_launcherBottom.set(1);
+        m_launcherTop.set(1);
+        System.out.println("shooter on");
+      }
+    }else if(stick.getRawButton(1) == false){
+      shooterToggle = true;
+    }
+  }
+
 }
