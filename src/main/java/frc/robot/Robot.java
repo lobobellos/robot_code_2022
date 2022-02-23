@@ -94,10 +94,10 @@ public class Robot extends TimedRobot {
     gyro = new ADXRS450_Gyro();
 
 		//add limelight and declare methods to get limelight data
-		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-		NetworkTableEntry tx = table.getEntry("tx");
-		NetworkTableEntry ty = table.getEntry("ty");
-		NetworkTableEntry ta = table.getEntry("ta");
+		table = NetworkTableInstance.getDefault().getTable("limelight");
+		tx = table.getEntry("tx");
+		table.getEntry("ty");
+		ta = table.getEntry("ta");
 
     gyro.calibrate();
   }
