@@ -4,14 +4,20 @@
 
 package frc.robot;
 
+//imports for managing limelight
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
+//imports for robot
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-/** This is a demo program showing how to use Mecanum control with the MecanumDrive class. */
+//build off of a demo mecanum drive program
 public class Robot extends TimedRobot {
   private static final int kFrontLeftChannel = 2;
   private static final int kRearLeftChannel = 3;
@@ -57,6 +63,11 @@ public class Robot extends TimedRobot {
   private Spark m_launcherBottom;
   private Spark m_launcherTop;
 
+	public NetworkTable table;
+	public NetworkTableEntry tx;
+	public NetworkTableEntry ty;
+	public NetworkTableEntry ta;
+
   @Override
   public void robotInit() {
     //declare motor controllers
@@ -78,8 +89,15 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
+		//declare stick and gyro
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
+
+		//add limelight and declare methods to get limelight data
+		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+		NetworkTableEntry tx = table.getEntry("tx");
+		NetworkTableEntry ty = table.getEntry("ty");
+		NetworkTableEntry ta = table.getEntry("ta");
 
     gyro.calibrate();
   }
@@ -102,6 +120,9 @@ public class Robot extends TimedRobot {
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
     m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
+
+		// display limelight x and y values
+		displayLimelight();
   }
 
   public void applySafeMode(){
@@ -196,5 +217,17 @@ public class Robot extends TimedRobot {
       shooterToggle = true;
     }
   }
+
+	public void displayLimelight(){
+		//read values periodically
+		double x = tx.getDouble(0.0);
+		double y = ty.getDouble(0.0);
+		double area = ta.getDouble(0.0);
+		
+		//post to smart dashboard periodically
+		SmartDashboard.putNumber("LimelightX", x);
+		SmartDashboard.putNumber("LimelightY", y);
+		SmartDashboard.putNumber("LimelightArea", area);
+	}
 
 }
