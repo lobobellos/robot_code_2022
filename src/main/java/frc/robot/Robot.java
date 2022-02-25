@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
     m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
 
 		// display limelight x and y values
-		displayLimelight();
+		//displayLimelight();
   }
 
   public void applySafeMode(){
