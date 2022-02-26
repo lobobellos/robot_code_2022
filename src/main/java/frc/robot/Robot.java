@@ -209,8 +209,8 @@ public class Robot extends TimedRobot {
         System.out.println("shooter off");
       }else{
         shooterRunning = true;
-        m_launcherBottom.set(1);
-        m_launcherTop.set(1);
+        m_launcherBottom.set(0.5);
+        m_launcherTop.set(0.5);
         System.out.println("shooter on");
       }
     }else if(stick.getRawButton(1) == false){
