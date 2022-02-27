@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
 		}else{
 			stickY = -stick.getY()*throttle;
 		}
-		if( Math.abs(stick.getZ()) < deadZoneZ || !stick.getRawButton(2) ){
+		if( Math.abs(stick.getZ()) < deadZoneZ){
 			stickZ = 0.0;
 		}else{
 			stickZ = stick.getZ()*throttle;
