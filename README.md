@@ -14,3 +14,10 @@ Joystick z-axis: rotate around z-axis<br>
 Joystick thumb button: allows z-axis rotation when pressed<br>
 <br>
 Joystick side button: toggle between robot-oriented and field oriented driving <br>
+
+
+# Motor Ports
+FL - 2<br>
+RL - 3<br>
+FR - 1<br>
+RR - 0<br>

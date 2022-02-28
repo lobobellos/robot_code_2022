@@ -82,10 +82,9 @@ public class Robot extends TimedRobot {
     m_launcherBottom = new Spark(l_bottomChannel);
     m_launcherTop = new Spark(l_topChannel);
 
-    //m_intake.close();
+
 
     // Invert the right side motors.
-    // You may need to change or remove this to match your robot.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
 
