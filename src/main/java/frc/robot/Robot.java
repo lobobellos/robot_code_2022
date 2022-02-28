@@ -59,7 +59,8 @@ public class Robot extends TimedRobot {
   private Joystick stick;
   private ADXRS450_Gyro gyro;
 
-  private Spark m_intake;
+  private Spark m_intakeW;
+  private Spark m_intakeB;
 
   private Spark m_launcherBottom;
   private Spark m_launcherTop;
