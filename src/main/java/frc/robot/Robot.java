@@ -24,8 +24,8 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
 
-  private static final int intakeChannelWhite = 4;
-  private static final int intakeChannelBlue = 5;
+  private static final int intakeLeftChannel = 4;
+  private static final int intakeRightChannel = 5;
   private static final int l_bottomChannel = 6;
   private static final int l_topChannel = 7;
 
@@ -59,8 +59,8 @@ public class Robot extends TimedRobot {
   private Joystick stick;
   private ADXRS450_Gyro gyro;
 
-  private Spark m_intakeW;
-  private Spark m_intakeB;
+  private Spark m_intakeL;
+  private Spark m_intakeR;
 
   private Spark m_launcherBottom;
   private Spark m_launcherTop;
@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
     Spark frontRight = new Spark(kFrontRightChannel);
     Spark rearRight = new Spark(kRearRightChannel);
 
-    m_intakeW = new Spark(intakeChannelWhite);
-    m_intakeB = new Spark(intakeChannelBlue);
+    m_intakeL = new Spark(intakeLeftChannel);
+    m_intakeR = new Spark(intakeRightChannel);
     m_launcherBottom = new Spark(l_bottomChannel);
     m_launcherTop = new Spark(l_topChannel);
 
@@ -188,13 +188,13 @@ public class Robot extends TimedRobot {
       intakeToggle = false;
       if(intakeRunning){
         intakeRunning = false;
-        m_intakeW.set(0);
-        m_intakeB.set(0);
+        m_intakeR.set(0);
+        m_intakeL.set(0);
         System.out.println("intake off");
       }else{
         intakeRunning = true;
-        m_intakeW.set(0.5);
-        m_intakeB.set(0.5);
+        m_intakeR.set(0.5);
+        m_intakeL.set(0.5);
         System.out.println("intake on");
       }
     }else if(stick.getRawButton(8) == false){
