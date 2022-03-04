@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
 		//add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
 		tx = table.getEntry("tx");
-		table.getEntry("ty");
+		ty = table.getEntry("ty");
 		ta = table.getEntry("ta");
 
     gyro.calibrate();
@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
     m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
 
 		// display limelight x and y values
-		//displayLimelight();
+		displayLimelight();
   }
 
   public void applySafeMode(){
