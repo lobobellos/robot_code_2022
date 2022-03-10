@@ -47,9 +47,10 @@ public class Robot extends TimedRobot {
   private static boolean intakeRunning = false;
   private static boolean intakeToggle = true;
 
-  //var used for toggling intake
+  //var used for toggling shooter
   private static boolean shooterRunning = false;
   private static boolean shooterToggle = true;
+  private int homingStage = 1;
 
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
@@ -108,21 +109,26 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //applies safe mode if nessecary
-    applySafeMode();
+    if(!shooterRunning){
+      //applies safe mode if nessecary
+      applySafeMode();
 
-    //get inputs from joystick and use them
-    applyDeadzone();
+      //get inputs from joystick and use them
+      applyDeadzone();
 
-    //toggle intake
-    toggleIntake();
+      //toggle intake
+      toggleIntake();
 
-    //toggle launcher
-    toggleShooter();
+      //toggle launcher
+      toggleShooter();
 
-    // Use the joystick X axis for lateral movement, Y axis for forward
-    // movement, and Z axis for rotation.
-    m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
+      // Use the joystick X axis for lateral movement, Y axis for forward
+      // movement, and Z axis for rotation.
+      m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
+    }else{
+      runlauncher();
+    }
+
 
 		// display limelight x and y values
 		displayLimelight();
@@ -207,33 +213,35 @@ public class Robot extends TimedRobot {
     //Toggles shooter motors
     if(shooterToggle && stick.getRawButton(1)){
       shooterToggle = false;
-      if(shooterRunning){
-        shooterRunning = false;
-        m_launcherBottom.set(0);
-        m_launcherTop.set(0);
-        System.out.println("shooter off");
-      }else{
+      if(!shooterRunning){
         shooterRunning = true;
-        m_launcherBottom.set(0.5);
-        m_launcherTop.set(0.5);
-        System.out.println("shooter on");
+        homingStage = 0;
       }
+      SmartDashboard.putBoolean("shooter running", shooterRunning);
     }else if(stick.getRawButton(1) == false){
       shooterToggle = true;
     }
   }
 
 	public void displayLimelight(){
-		//read values periodically
-		double x = tx.getDouble(0.0);
-		double y = ty.getDouble(0.0);
-		double area = ta.getDouble(0.0);
-		
 		//post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX",x);
-    SmartDashboard.putNumber("LimelightY",y);
-    SmartDashboard.putNumber("LimelightArea",area);
+    SmartDashboard.putNumber("LimelightX",tx.getDouble(0.0));
+    SmartDashboard.putNumber("LimelightY",ty.getDouble(0.0));
+    SmartDashboard.putNumber("LimelightArea",ta.getDouble(0.0));
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
 	}
 
+  public void runlauncher(){
+    if(homingStage == 0){
+      //spin until facing hub
+
+    }else if(homingStage == 1){
+      //if needed, move to correct distance from robot
+
+      
+
+    }else if(homingStage == 2){
+      //set motors to speed
+    }
+  }
 }
