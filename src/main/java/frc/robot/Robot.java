@@ -182,7 +182,7 @@ public class Robot extends TimedRobot {
     }else{
       gyroAngle = 0.0;
     }
-    
+  
 	}
 
   public void toggleIntake(){
@@ -236,7 +236,7 @@ public class Robot extends TimedRobot {
 			}else if(tx.getDouble(0.0) <= -0.1){
 				m_robotDrive.driveCartesian(0.0, 0.0, 0.1, 0.0);
 			}else{
-				homingStage = 1
+				homingStage = 1;
 			}
 
     }else if(homingStage == 1){
