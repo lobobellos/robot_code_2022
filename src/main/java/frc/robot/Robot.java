@@ -104,6 +104,43 @@ public class Robot extends TimedRobot {
 		ta = table.getEntry("ta");
 
     gyro.calibrate();
+	  
+	  // Controller Joysticks. X axis is horizontal value of joystick, y axis is vertical.
+// Fully left on the X axis gives a value of -1, fully right gives a value of 1.
+// Fully down on the Y axis gives a value of -1, fully up gives a value of 1.
+private double leftYAxisValue, leftXAxisValue, rightYAxisValue, rightXAxisValue;
+// Controller Triggers. 0 is completely released, 1 is completely pressed, 0.5 is half pressed etc.
+private double leftTriggerValue, rightTriggerValue;
+// Controller Buttons and Bumpers
+private boolean rightBumperPressed, leftBumperPressed;
+private boolean aButtonPressed, bButtonPressed, yButtonPressed, xButtonPressed;
+// Controller DPad Angle (It's dumb and gives you the "angle" of the DPad. For example, 90 degrees is right, 180 down, 270 left, 0 up)
+private int dpadAngle;
+
+public XboxController() {
+    // Joystick Axis
+    leftYAxisValue = controller.getLeftY();
+    leftXAxisValue = controller.getLeftX();
+    rightYAxisValue = controller.getRightY();
+    rightXAxisValue = controller.getRightX();
+    
+    // Trigger Axis
+    leftTriggerValue = controller.getLeftTriggerAxis();
+    rightTriggerValue = controller.getRightTriggerAxis();
+
+    // Bumper Buttons
+    rightBumperPressed = controller.getRightBumper();
+    leftBumperPressed = controller.getLeftBumper();
+
+    // Some other buttons
+    aButtonPressed = controller.getAButton();
+    bButtonPressed = controller.getBButton();
+    xButtonPressed = controller.getXButton();
+    yButtonPressed = controller.getYButton();
+
+    // Dpad
+    dpadAngle = controller.getPOV();
+}
   }
 
   @Override
