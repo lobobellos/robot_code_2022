@@ -235,9 +235,9 @@ public class Robot extends TimedRobot {
     if(homingStage == 0){
       //spin until facing hub
 			if(tx.getDouble(0.0) >0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, -0.1, 0.0);
+				m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
 			}else if(tx.getDouble(0.0) <= -0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, 0.1, 0.0);
+				m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
 			}else{
 				//homingStage = 1;
         shooterRunning = false;
