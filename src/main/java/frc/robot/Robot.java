@@ -239,7 +239,8 @@ public class Robot extends TimedRobot {
 			}else if(tx.getDouble(0.0) <= -0.1){
 				m_robotDrive.driveCartesian(0.0, 0.0, 0.1, 0.0);
 			}else{
-				homingStage = 1;
+				//homingStage = 1;
+        shooterRunning = false;
 			}
 
 
