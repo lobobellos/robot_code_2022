@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
   private MecanumDrive m_robotDrive;
   private Joystick stick;
   private ADXRS450_Gyro gyro;
+  private Ultrasonic uSonic;
 
   private Spark m_intakeL;
   private Spark m_intakeR;
@@ -235,11 +237,16 @@ public class Robot extends TimedRobot {
     if(homingStage == 0){
       //spin until facing hub
 
+
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
-
-      
-
+      if(uSonic.getRangeInches() >= 100){
+        m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
+      }else if(uSonic.getRangeInches() <= 110){
+        m_robotDrive.driveCartesian(0.5, 0.0, 0.0, 0.0);
+      }else{
+        homingStage = 2;
+      }
     }else if(homingStage == 2){
       //set motors to speed
     }
