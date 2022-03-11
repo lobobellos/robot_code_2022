@@ -111,6 +111,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+			// display limelight x and y values
+		displayLimelight();
+		
     if(!shooterRunning){
       //applies safe mode if nessecary
       applySafeMode();
@@ -130,10 +133,6 @@ public class Robot extends TimedRobot {
     }else{
       runlauncher();
     }
-
-
-		// display limelight x and y values
-		displayLimelight();
   }
 
   public void applySafeMode(){
@@ -162,8 +161,6 @@ public class Robot extends TimedRobot {
   }
 
   public void applyDeadzone(){
-    //parse throttle (min:0.26 , max:1)
-    throttle = ((-stick.getThrottle())+1.7)/2.7;
 
 		//apply a deadzone
 		if( Math.abs(stick.getX()) < deadZoneX){
@@ -188,7 +185,7 @@ public class Robot extends TimedRobot {
     }else{
       gyroAngle = 0.0;
     }
-    
+  
 	}
 
   public void toggleIntake(){
@@ -233,9 +230,17 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
 	}
 
+	
   public void runlauncher(){
     if(homingStage == 0){
       //spin until facing hub
+			if(tx.getDouble(0.0) >0.1){
+				m_robotDrive.driveCartesian(0.0, 0.0, -0.1, 0.0);
+			}else if(tx.getDouble(0.0) <= -0.1){
+				m_robotDrive.driveCartesian(0.0, 0.0, 0.1, 0.0);
+			}else{
+				homingStage = 1;
+			}
 
 
     }else if(homingStage == 1){
