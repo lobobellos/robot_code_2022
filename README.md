@@ -12,12 +12,16 @@ Joystick x-axis: move horisontal <br>
 Joystick z-axis: rotate around z-axis<br>
 <br>
 Joystick thumb button: allows z-axis rotation when pressed<br>
-<br>
-Joystick side button: toggle between robot-oriented and field oriented driving <br>
+Joystick side button: toggle safe mode <br>
+Joystick trigger: start launch sequence <br>
 
 
 # Motor Ports
-FL - 2<br>
-RL - 3<br>
-FR - 1<br>
-RR - 0<br>
+| motor | port |
+| --- | ----------- |
+| Gearbox- RearRight | 0 |
+| Gearbox- FrontRight | 1 |
+| Gearbox- Rearleft | 2 |
+| Gearbox- Rearleft | 3 |
+| intake- Left | 4 |
+| intake- Right | 5 |
