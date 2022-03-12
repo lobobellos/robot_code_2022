@@ -13,6 +13,7 @@ Joystick z-axis: rotate around z-axis<br>
 <br>
 Joystick thumb button: allows z-axis rotation when pressed<br>
 Joystick side button: toggle safe mode <br>
+Joystick side button: toggle intake motors<br>
 Joystick trigger: start launch sequence <br>
 
 
@@ -23,5 +24,5 @@ Joystick trigger: start launch sequence <br>
 | Gearbox- FrontRight | 1 |
 | Gearbox- Rearleft | 2 |
 | Gearbox- Rearleft | 3 |
-| intake- Left | 4 |
-| intake- Right | 5 |
+| Intake- Left | 4 |
+| Intake- Right | 5 |
