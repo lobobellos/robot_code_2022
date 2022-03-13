@@ -234,16 +234,14 @@ public class Robot extends TimedRobot {
   public void runlauncher(){
     if(homingStage == 0){
       //spin until facing hub
-			if(tx.getDouble(0.0) >0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
-			}else if(tx.getDouble(0.0) <= -0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
+			if(tx.getDouble(0.0) >0.5){
+				m_robotDrive.driveCartesian(0.0, 0.0, 0.35, 0.0);
+			}else if(tx.getDouble(0.0) <= -0.5){
+				m_robotDrive.driveCartesian(0.0, 0.0, -0.35, 0.0);
 			}else{
 				//homingStage = 1;
         shooterRunning = false;
 			}
-
-
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
       if(uSonic.getRangeInches() >= 100){
@@ -255,6 +253,8 @@ public class Robot extends TimedRobot {
       }
     }else if(homingStage == 2){
       //set motors to speed
+			m_launcherBottom.set(0.5)
+			m_launcherTop.set(0.5)
     }
   }
 }

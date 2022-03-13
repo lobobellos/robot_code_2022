@@ -26,3 +26,5 @@ Joystick trigger: start launch sequence <br>
 | Gearbox- Rearleft | 3 |
 | Intake- Left | 4 |
 | Intake- Right | 5 |
+| Launcher- Bottom | 6 |
+| Launcher- Top | 7 |
