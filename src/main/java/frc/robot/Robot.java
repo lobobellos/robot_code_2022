@@ -58,6 +58,8 @@ public class Robot extends TimedRobot {
   private static boolean shooterToggle = true;
   private int homingStage = 1;
 
+  
+
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
 	private static final double deadZoneZ = 0;
@@ -84,7 +86,7 @@ public class Robot extends TimedRobot {
   private boolean extendArms = false;
   private boolean retractArms = true;
   private int climbButton = 4;
-  private static final int processTime = 6; 
+  private final int processTime = 6; 
   private int climbLeftChannel = 8;
   private int climbRightChannel = 9;
 
@@ -296,7 +298,7 @@ public class Robot extends TimedRobot {
           m_climbL.set(0.9);
           m_climbR.set(0.9);
           //Wating for climb to fully retract
-          Timer.delay(proccessTime);
+          Timer.delay(processTime);
           retractArms = true;
           extendArms = false;
           System.out.println("Retracts Arms: " + retractArms);
@@ -308,7 +310,7 @@ public class Robot extends TimedRobot {
         } else if (retractArms) {
           m_climbL.set(3);
           m_climbR.set(3);
-          Timer.delay(proccessTime);
+          Timer.delay(processTime);
           extendArms = true;
           retractArms = false;
           System.out.println("Retracts Arms: " + retractArms);
