@@ -14,7 +14,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-//imports for robot
+//Imports for robot
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -22,8 +22,11 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-//build off of a demo mecanum drive program
+
+
+// Build off of a demo mecanum drive program
 public class Robot extends TimedRobot {
+
   private static final int kFrontLeftChannel = 2;
   private static final int kRearLeftChannel = 3;
   private static final int kFrontRightChannel = 1;
@@ -41,7 +44,6 @@ public class Robot extends TimedRobot {
   private static double throttle;
 
   private static final int stickChannel = 0;
-
   private static final boolean useGyro = true;
 
   //vars used for toggling safemode
@@ -77,8 +79,19 @@ public class Robot extends TimedRobot {
 	public NetworkTableEntry ty;
 	public NetworkTableEntry ta;
 
+  //Climbing mechanism
+  private Spark m_climbL;
+  private Spark m_climbR;
+  private boolean extendArms = false;
+  private boolean retractArms = true;
+  private int climbButton = 4;
+  private static final int processTime = 6;
+  private int climbLeftChannel = 8;
+  private int climbRightChannel = 9;
+
   @Override
   public void robotInit() {
+    
     //declare motor controllers
     Spark frontLeft = new Spark(kFrontLeftChannel);
     Spark rearLeft = new Spark(kRearLeftChannel);
@@ -89,9 +102,9 @@ public class Robot extends TimedRobot {
     m_intakeR = new Spark(intakeRightChannel);
     m_launcherBottom = new Spark(l_bottomChannel);
     m_launcherTop = new Spark(l_topChannel);
-
-
-
+    m_climbL = new Spark(climbLeftChannel);
+    m_climbR = new Spark(climbRightChannel);
+    
     // Invert the right side motors.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
@@ -104,7 +117,7 @@ public class Robot extends TimedRobot {
     gyro = new ADXRS450_Gyro();
 		uSonic = new Ultrasonic(1, 2);
 
-		//add limelight and declare methods to get limelight data
+		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
 		tx = table.getEntry("tx");
 		ty = table.getEntry("ty");
@@ -141,13 +154,12 @@ public class Robot extends TimedRobot {
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
-    }else{
+    } else {
       runlauncher();
     }
   }
 
   public void applySafeMode(){
-
     //Toggles safe mode
     if(safeModeToggle && stick.getRawButton(7)){
       safeModeToggle = false;
@@ -165,7 +177,7 @@ public class Robot extends TimedRobot {
     //applies safe mode if nessecary
     if(safeMode){
       throttle = 0.3;
-    }else{
+    } else {
       //parse throttle (min:0.26 , max:1)
       throttle = ((-stick.getThrottle())+1.7)/2.7;
     }
@@ -268,6 +280,43 @@ public class Robot extends TimedRobot {
       //set motors to speed
 			m_launcherBottom.set(0.5);
 			m_launcherTop.set(0.5);
+    }
+  }
+
+/**
+  *Toggles the climbing mechanism
+  *When the button is pressed, and either extend or retract is true, it will do the opposite. 
+  @precondition arms must be retracted before doing pressing button up.
+  */
+  public void toggleClimb() {
+    if (stick.getRawButton(climbButton)) {
+        //Extends or retracts arms
+        if (extendArms) {
+          m_climbL.setInverted(true);
+          m_climbR.setInverted(true);
+          m_climbL.set(0.9);
+          m_climbR.set(0.9);
+          //Wating for climb to fully retract
+          //TimeUnit.SECONDS.sleep(processTime);
+          retractArms = true;
+          extendArms = false;
+          System.out.println("Retracts Arms: " + retractArms);
+          System.out.println("Extend Arns: " + extendArms);
+          m_climbR.setInverted(true);
+          m_climbL.setInverted(true);
+          m_climbL.stopMotor();
+          m_climbR.stopMotor();
+        } else if (retractArms) {
+          m_climbL.set(3);
+          m_climbR.set(3);
+          //TimeUnit.SECONDS.sleep(processTime);
+          extendArms = true;
+          retractArms = false;
+          System.out.println("Retracts Arms: " + retractArms);
+          System.out.println("Extend Arns: " + extendArms);
+          m_climbL.stopMotor();
+          m_climbR.stopMotor();
+      }
     }
   }
 }
