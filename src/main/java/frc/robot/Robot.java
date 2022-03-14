@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+//import cameraServer
+import edu.wpi.first.cameraserver.CameraServer;
+
+
 //imports for managing limelight
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
@@ -95,9 +99,10 @@ public class Robot extends TimedRobot {
 
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
-		//declare stick and gyro
+		//declare stick, gyro, and ultrasonic
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
+		uSonic = new Ultrasonic(1, 2);
 
 		//add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -105,7 +110,13 @@ public class Robot extends TimedRobot {
 		ty = table.getEntry("ty");
 		ta = table.getEntry("ta");
 
+		//initialize cameraServer
+		CameraServer.startAutomaticCapture();
+
+		//calibrate gyro
     gyro.calibrate();
+		//calibrate ultrasonic sensor
+		Ultrasonic.setAutomaticMode(true);
   }
 
   @Override
