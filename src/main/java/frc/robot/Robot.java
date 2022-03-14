@@ -264,8 +264,8 @@ public class Robot extends TimedRobot {
       }
     }else if(homingStage == 2){
       //set motors to speed
-			m_launcherBottom.set(0.5)
-			m_launcherTop.set(0.5)
+			m_launcherBottom.set(0.5);
+			m_launcherTop.set(0.5);
     }
   }
 }
