@@ -301,20 +301,20 @@ public class Robot extends TimedRobot {
           Timer.delay(processTime);
           retractArms = true;
           extendArms = false;
-          System.out.println("Retracts Arms: " + retractArms);
-          System.out.println("Extend Arns: " + extendArms);
+          SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
+          SmartDashboard.putBoolean("Extend Arns: ", extendArms);
           m_climbR.setInverted(false);
           m_climbL.setInverted(false);
           m_climbL.stopMotor();
           m_climbR.stopMotor();
         } else if (retractArms) {
-          m_climbL.set(3);
-          m_climbR.set(3);
+          m_climbL.set(0.9);
+          m_climbR.set(0.9);
           Timer.delay(processTime);
           extendArms = true;
           retractArms = false;
-          System.out.println("Retracts Arms: " + retractArms);
-          System.out.println("Extend Arns: " + extendArms);
+          SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
+          SmartDashboard.putBoolean("Extend Arns: ", extendArms);
           m_climbL.stopMotor();
           m_climbR.stopMotor();
       }
