@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
 			// display limelight x and y values
-		displayLimelight();
+		updateDashboard();
 		
     if(!shooterRunning){
       //applies safe mode if nessecary
@@ -233,12 +233,14 @@ public class Robot extends TimedRobot {
     }
   }
 
-	public void displayLimelight(){
+	public void updateDashboard(){
 		//post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX",tx.getDouble(0.0));
     SmartDashboard.putNumber("LimelightY",ty.getDouble(0.0));
     SmartDashboard.putNumber("LimelightArea",ta.getDouble(0.0));
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
+    SmartDashboard.putBoolean("shooter running", shooterRunning);
+    SmartDashboard.putNumber("shooter running", uSonic.getRangeInches());
 	}
 
 	
