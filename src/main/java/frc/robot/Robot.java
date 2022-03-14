@@ -303,8 +303,8 @@ public class Robot extends TimedRobot {
           extendArms = false;
           System.out.println("Retracts Arms: " + retractArms);
           System.out.println("Extend Arns: " + extendArms);
-          m_climbR.setInverted(true);
-          m_climbL.setInverted(true);
+          m_climbR.setInverted(false);
+          m_climbL.setInverted(false);
           m_climbL.stopMotor();
           m_climbR.stopMotor();
         } else if (retractArms) {
