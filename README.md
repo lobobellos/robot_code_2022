@@ -28,3 +28,5 @@ Joystick trigger: start launch sequence <br>
 | Intake- Right | 5 |
 | Launcher- Bottom | 6 |
 | Launcher- Top | 7 |
+| Arm- Left | 8 |
+| Arm-Right | 9 |
