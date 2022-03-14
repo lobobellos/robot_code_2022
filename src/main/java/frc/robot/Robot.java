@@ -240,7 +240,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea",ta.getDouble(0.0));
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
     SmartDashboard.putBoolean("shooter running", shooterRunning);
-    SmartDashboard.putNumber("shooter running", uSonic.getRangeInches());
+    SmartDashboard.putNumber("ultrasonic", uSonic.getRangeInches());
 	}
 
 	
