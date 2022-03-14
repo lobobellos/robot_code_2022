@@ -21,8 +21,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
-
+import edu.wpi.first.wpilibj.Timer;
 
 // Build off of a demo mecanum drive program
 public class Robot extends TimedRobot {
@@ -85,7 +84,7 @@ public class Robot extends TimedRobot {
   private boolean extendArms = false;
   private boolean retractArms = true;
   private int climbButton = 4;
-  private static final int processTime = 6;
+  private static final int processTime = 6; 
   private int climbLeftChannel = 8;
   private int climbRightChannel = 9;
 
@@ -297,7 +296,7 @@ public class Robot extends TimedRobot {
           m_climbL.set(0.9);
           m_climbR.set(0.9);
           //Wating for climb to fully retract
-          //TimeUnit.SECONDS.sleep(processTime);
+          Timer.delay(proccessTime);
           retractArms = true;
           extendArms = false;
           System.out.println("Retracts Arms: " + retractArms);
@@ -309,7 +308,7 @@ public class Robot extends TimedRobot {
         } else if (retractArms) {
           m_climbL.set(3);
           m_climbR.set(3);
-          //TimeUnit.SECONDS.sleep(processTime);
+          Timer.delay(proccessTime);
           extendArms = true;
           retractArms = false;
           System.out.println("Retracts Arms: " + retractArms);
