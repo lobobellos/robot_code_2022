@@ -254,6 +254,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
     SmartDashboard.putBoolean("shooter running", shooterRunning);
     SmartDashboard.putNumber("ultrasonic", uSonic.getRangeInches());
+    SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
+    SmartDashboard.putBoolean("Extend Arms: ", extendArms);
 	}
 
 	
@@ -301,8 +303,6 @@ public class Robot extends TimedRobot {
           Timer.delay(processTime);
           retractArms = true;
           extendArms = false;
-          SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
-          SmartDashboard.putBoolean("Extend Arns: ", extendArms);
           m_climbR.setInverted(false);
           m_climbL.setInverted(false);
           m_climbL.stopMotor();
@@ -313,8 +313,6 @@ public class Robot extends TimedRobot {
           Timer.delay(processTime);
           extendArms = true;
           retractArms = false;
-          SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
-          SmartDashboard.putBoolean("Extend Arns: ", extendArms);
           m_climbL.stopMotor();
           m_climbR.stopMotor();
       }
