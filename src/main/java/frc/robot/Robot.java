@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
 		//declare stick, gyro, and ultrasonic
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
-		uSonic = new Ultrasonic(1, 2);
+		uSonic = new Ultrasonic(0, 1);
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
