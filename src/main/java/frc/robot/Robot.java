@@ -33,8 +33,6 @@ public class Robot extends TimedRobot {
 
   private static final int intakeLeftChannel = 4;
   private static final int intakeRightChannel = 5;
-  private static final int l_bottomChannel = 6;
-  private static final int l_topChannel = 7;
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
@@ -70,10 +68,8 @@ public class Robot extends TimedRobot {
   private Ultrasonic uSonic;
 
   private Spark m_intakeL;
-  private Spark m_intakeR;
+  private Spark m_shooterR;
 
-  private Spark m_launcherBottom;
-  private Spark m_launcherTop;
 
 	public NetworkTable table;
 	public NetworkTableEntry tx;
@@ -100,9 +96,8 @@ public class Robot extends TimedRobot {
     Spark rearRight = new Spark(kRearRightChannel);
 
     m_intakeL = new Spark(intakeLeftChannel);
-    m_intakeR = new Spark(intakeRightChannel);
-    m_launcherBottom = new Spark(l_bottomChannel);
-    m_launcherTop = new Spark(l_topChannel);
+    m_shooterR = new Spark(intakeRightChannel);
+
     m_climbL = new Spark(climbLeftChannel);
     m_climbR = new Spark(climbRightChannel);
     
@@ -210,7 +205,7 @@ public class Robot extends TimedRobot {
       gyroAngle = 0.0;
     }
   
-	}
+	} 
 
   public void toggleIntake(){
     //Toggles intake motor
@@ -218,12 +213,12 @@ public class Robot extends TimedRobot {
       intakeToggle = false;
       if(intakeRunning){
         intakeRunning = false;
-        m_intakeR.set(0);
+        m_shooterR.set(0);
         m_intakeL.set(0);
         System.out.println("intake off");
       }else{
         intakeRunning = true;
-        m_intakeR.set(0.5);
+        m_shooterR.set(-0.5);
         m_intakeL.set(0.5);
         System.out.println("intake on");
       }
@@ -283,8 +278,8 @@ public class Robot extends TimedRobot {
       }
     }else if(homingStage == 2){
       //set motors to speed
-			m_launcherBottom.set(0.5);
-			m_launcherTop.set(0.5);
+			m_shooterR.set(0.5);
+
     }
   }
 
