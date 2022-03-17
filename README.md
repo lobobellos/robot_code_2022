@@ -17,7 +17,7 @@ Joystick side button: toggle intake motors<br>
 Joystick trigger: start launch sequence <br>
 
 
-# Motor Ports
+# PWM Ports
 | motor | port |
 | --- | ----------- |
 | Gearbox- RearRight | 0 |
@@ -25,8 +25,18 @@ Joystick trigger: start launch sequence <br>
 | Gearbox- Rearleft | 2 |
 | Gearbox- Rearleft | 3 |
 | Intake- Left | 4 |
-| Intake- Right | 5 |
-| Launcher- Bottom | 6 |
-| Launcher- Top | 7 |
+| launcher- Right | 5 |
 | Arm- Left | 8 |
 | Arm-Right | 9 |
+
+
+# DIO ports
+
+| item | port |
+| --- | ----------- |
+| ultrasonic- Output | 0 |
+| ultrasonic- Input | 1 |
+
+
+
+
