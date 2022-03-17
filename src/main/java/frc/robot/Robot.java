@@ -133,9 +133,14 @@ public class Robot extends TimedRobot {
 		Ultrasonic.setAutomaticMode(true);
 
   }
+  
+  @Override
+  public void autonomousPeriodic() {
+    runLauncher();
+  }
 
   @Override
-  public void autonomousInit() {
+  public void teleopInit() {
     //Spins bot at initialization phase;
     spin();
   }
@@ -353,19 +358,21 @@ public class Robot extends TimedRobot {
     time.start(); 
     
     while (time.get() <= spinTime / 2) {
-      m_robotDrive.driveCartesian(0,0,1,0);
+      m_robotDrive.driveCartesian(0.0, 0.0, 1.0, 0.0);
     }
     
     time.stop();
-    m_robotDrive.driveCartesian(0,0,0,0);
+    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
     time.start();
     
      while (time.get() <= spinTime / 2) {
-      m_robotDrive.driveCartesian(0,0,-1,0);
+      m_robotDrive.driveCartesian(0.0, 0.0, -1.0, 0.0);
     }
   
     time.stop();
-    m_robotDrive.driveCartesian(0,0,0,0);
+    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
     return;
   }
+
+  public void autonomous driving 
 }
