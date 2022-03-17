@@ -375,6 +375,4 @@ public class Robot extends TimedRobot {
     m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
     return;
   }
-
-  public void autonomous driving 
 }
