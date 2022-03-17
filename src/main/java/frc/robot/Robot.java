@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
   
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
-	private static final double deadZoneZ = 0;
+	private static final double deadZoneZ = 0.5;
 
   private MecanumDrive m_robotDrive;
   private Joystick stick;
