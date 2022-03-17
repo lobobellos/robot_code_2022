@@ -364,7 +364,7 @@ public class Robot extends TimedRobot {
       m_robotDrive.driveCartesian(0,0,-1,0);
     }
   
-    time.stop()
+    time.stop();
     m_robotDrive.driveCartesian(0,0,0,0);
     return;
   }
