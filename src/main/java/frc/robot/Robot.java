@@ -336,6 +336,7 @@ public class Robot extends TimedRobot {
     }
   }
   
+  //Spin method for robot
   public void spin() {
     Timer time = new Timer();
     time.start(); 
