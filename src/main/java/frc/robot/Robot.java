@@ -133,13 +133,16 @@ public class Robot extends TimedRobot {
 		Ultrasonic.setAutomaticMode(true);
 
   }
+  
   @Override
-  public void disabledPeriodic(){
-    updateDashboard();
+  public void autonomousPeriodic() {
+    if (stick.getRawButton(1)) {
+      runlauncher();
+    }
   }
 
   @Override
-  public void autonomousInit() {
+  public void teleopInit() {
     //Spins bot at initialization phase;
     spin();
   }
@@ -313,29 +316,40 @@ public class Robot extends TimedRobot {
   @precondition arms must be retracted before doing pressing button up.
   */
   public void toggleClimb() {
+    //If button is pressed
     if (stick.getRawButton(climbButton)) {
+      Timer time = new Timer();
         //Extends or retracts arms
         if (extendArms) {
           m_climbL.setInverted(true);
           m_climbR.setInverted(true);
           m_climbL.set(0.9);
           m_climbR.set(0.9);
-          //Wating for climb to fully retract
-          Timer.delay(processTime);
+          
+          while (!(time.get() <= processTime)) {
+            m_climbL.stopMotor();
+            m_climbR.stopMotor();
+          }
+          
           retractArms = true;
           extendArms = false;
           m_climbR.setInverted(false);
           m_climbL.setInverted(false);
-          m_climbL.stopMotor();
-          m_climbR.stopMotor();
+          time.stop();
+          return;
         } else if (retractArms) {
-          m_climbL.set(0.9);
-          m_climbR.set(0.9);
-          Timer.delay(processTime);
+            m_climbL.set(0.9);
+            m_climbR.set(0.9);
+          
+            while (!(time.get() <= processTime)) {
+              m_climbL.stopMotor();
+              m_climbR.stopMotor();
+            }
+          
           extendArms = true;
           retractArms = false;
-          m_climbL.stopMotor();
-          m_climbR.stopMotor();
+          time.stop();
+          return;
       }
     }
   }
@@ -346,19 +360,19 @@ public class Robot extends TimedRobot {
     time.start(); 
     
     while (time.get() <= spinTime / 2) {
-      m_robotDrive.driveCartesian(0,0,1,0);
+      m_robotDrive.driveCartesian(0.0, 0.0, 1.0, 0.0);
     }
     
     time.stop();
-    m_robotDrive.driveCartesian(0,0,0,0);
+    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
     time.start();
     
      while (time.get() <= spinTime / 2) {
-      m_robotDrive.driveCartesian(0,0,-1,0);
+      m_robotDrive.driveCartesian(0.0, 0.0, -1.0, 0.0);
     }
   
     time.stop();
-    m_robotDrive.driveCartesian(0,0,0,0);
+    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
     return;
   }
 }
