@@ -272,13 +272,13 @@ public class Robot extends TimedRobot {
     if(homingStage == 0){
       //spin until facing hub
 			if(tx.getDouble(0.0) > 0.25){
-        if(tx.getDouble(0.0) < 1){
+        if(tx.getDouble(0.0) < 3){
           m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
         }
 			}else if(tx.getDouble(0.0) <= -0.25){
-				if(tx.getDouble(0.0) > -1){
+				if(tx.getDouble(0.0) > -3){
           m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
