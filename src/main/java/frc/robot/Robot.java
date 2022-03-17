@@ -347,14 +347,13 @@ public class Robot extends TimedRobot {
     
     time.stop();
     m_robotDrive.driveCartesian(0,0,0,0);
-    Timer.delay(2);
     time.start();
     
      while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0,0,-1,0);
     }
   
-    time.stop()
+    time.stop();
     m_robotDrive.driveCartesian(0,0,0,0);
     return;
   }
