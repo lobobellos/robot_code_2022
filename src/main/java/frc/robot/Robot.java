@@ -309,29 +309,40 @@ public class Robot extends TimedRobot {
   @precondition arms must be retracted before doing pressing button up.
   */
   public void toggleClimb() {
+    //If button is pressed
     if (stick.getRawButton(climbButton)) {
+      Timer time = new Timer();
         //Extends or retracts arms
         if (extendArms) {
           m_climbL.setInverted(true);
           m_climbR.setInverted(true);
           m_climbL.set(0.9);
           m_climbR.set(0.9);
-          //Wating for climb to fully retract
-          Timer.delay(processTime);
+          
+          while (!(time.get() <= processTime)) {
+            m_climbL.stopMotor();
+            m_climbR.stopMotor();
+          }
+          
           retractArms = true;
           extendArms = false;
           m_climbR.setInverted(false);
           m_climbL.setInverted(false);
-          m_climbL.stopMotor();
-          m_climbR.stopMotor();
+          timer.stop;
+          return;
         } else if (retractArms) {
-          m_climbL.set(0.9);
-          m_climbR.set(0.9);
-          Timer.delay(processTime);
+            m_climbL.set(0.9);
+            m_climbR.set(0.9);
+          
+            while (!(time.get() <= processTime)) {
+              m_climbL.stopMotor();
+              m_climbR.stopMotor();
+            }
+          
           extendArms = true;
           retractArms = false;
-          m_climbL.stopMotor();
-          m_climbR.stopMotor();
+          timer.stop();
+          return;
       }
     }
   }
@@ -347,7 +358,6 @@ public class Robot extends TimedRobot {
     
     time.stop();
     m_robotDrive.driveCartesian(0,0,0,0);
-    Timer.delay(2);
     time.start();
     
      while (time.get() <= spinTime / 2) {
