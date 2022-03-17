@@ -26,13 +26,19 @@ import edu.wpi.first.wpilibj.Timer;
 // Build off of a demo mecanum drive program
 public class Robot extends TimedRobot {
 
+  //PWM channels
   private static final int kFrontLeftChannel = 2;
   private static final int kRearLeftChannel = 3;
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
-
   private static final int intakeLeftChannel = 4;
   private static final int intakeRightChannel = 5;
+
+  //DIO channels
+  private static final int ultrasonicOutputChannel = 0;
+  private static final int ultrasonicInputChannel = 1;
+  
+
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
@@ -65,7 +71,7 @@ public class Robot extends TimedRobot {
   private MecanumDrive m_robotDrive;
   private Joystick stick;
   private ADXRS450_Gyro gyro;
-  private Ultrasonic uSonic;
+  public Ultrasonic uSonic;
 
   private Spark m_intakeL;
   private Spark m_shooterR;
@@ -111,7 +117,7 @@ public class Robot extends TimedRobot {
 		//declare stick, gyro, and ultrasonic
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
-		uSonic = new Ultrasonic(0, 1);
+		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -125,8 +131,11 @@ public class Robot extends TimedRobot {
 		//calibrate gyro
     gyro.calibrate();
 		//calibrate ultrasonic sensor
+    uSonic.setEnabled(true);
 		Ultrasonic.setAutomaticMode(true);
+
   }
+
 
   @Override
   public void teleopPeriodic() {
