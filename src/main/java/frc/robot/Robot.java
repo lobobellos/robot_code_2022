@@ -336,16 +336,26 @@ public class Robot extends TimedRobot {
     }
   }
   
-  //Spin method for robot
+  //Makes the robot spin for a specified amount of time
   public void spin() {
     Timer time = new Timer();
     time.start(); 
     
-    while (time.get() <= spinTime) {
+    while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0,0,1,0);
     }
     
     time.stop();
+    m_robotDrive.driveCartesian(0,0,0,0);
+    Timer.delay(2);
+    time.start();
+    
+     while (time.get() <= spinTime / 2) {
+      m_robotDrive.driveCartesian(0,0,-1,0);
+    }
+  
+    time.stop()
+    m_robotDrive.driveCartesian(0,0,0,0);
     return;
   }
 }
