@@ -133,6 +133,10 @@ public class Robot extends TimedRobot {
 		Ultrasonic.setAutomaticMode(true);
 
   }
+  @Override
+  public void disabledPeriodic(){
+    updateDashboard();
+  }
 
   @Override
   public void autonomousInit() {
