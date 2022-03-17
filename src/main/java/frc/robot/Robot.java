@@ -37,14 +37,13 @@ public class Robot extends TimedRobot {
   //DIO channels
   private static final int ultrasonicOutputChannel = 0;
   private static final int ultrasonicInputChannel = 1;
-  
-
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
   private static double gyroAngle = 0;
   private static double throttle;
+  private static final double spinTime = 5;
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
@@ -63,7 +62,6 @@ public class Robot extends TimedRobot {
   private int homingStage = 1;
 
   
-
   private static final double deadZoneX = 0;
 	private static final double deadZoneY = 0;
 	private static final double deadZoneZ = 0;
@@ -136,11 +134,16 @@ public class Robot extends TimedRobot {
 
   }
 
+  @Override
+  public void autonomousInit() {
+    //Spins bot at initialization phase;
+    spin();
+  }
 
   @Override
   public void teleopPeriodic() {
 
-			// display limelight x and y values
+		// display limelight x and y values
 		updateDashboard();
 		
     if(!shooterRunning){
@@ -331,5 +334,17 @@ public class Robot extends TimedRobot {
           m_climbR.stopMotor();
       }
     }
+  }
+  
+  public void spin() {
+    Timer time = new Timer();
+    time.start(); 
+    
+    while (time.get() <= spinTime) {
+      m_robotDrive.driveCartesian(0,0,1,0);
+    }
+    
+    time.stop();
+    return;
   }
 }
