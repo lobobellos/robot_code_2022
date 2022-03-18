@@ -158,8 +158,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    shooterRunning =false;
+    safeMode = false;
+
+
     //Spins bot at initialization phase;
-    spin();
+    //spin();
   }
 
   @Override
@@ -252,8 +256,8 @@ public class Robot extends TimedRobot {
         System.out.println("intake off");
       }else{
         intakeRunning = true;
-        m_shooterR.set(-0.5);
-        m_intakeL.set(0.5);
+        m_shooterR.set(-0.75);
+        m_intakeL.set(-0.75);
         System.out.println("intake on");
       }
     }else if(stick.getRawButton(8) == false){
@@ -310,13 +314,14 @@ public class Robot extends TimedRobot {
 			}
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
-      if(uSonic.getRangeInches() >= 100){
-        m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
-      }else if(uSonic.getRangeInches() <= 110){
+      if(uSonic.getRangeInches() >= 60){
         m_robotDrive.driveCartesian(0.5, 0.0, 0.0, 0.0);
+      }else if(uSonic.getRangeInches() <= 50){
+        m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
       }else{
         //homingStage = 2;
         shooterRunning = false;
+
       }
     }else if(homingStage == 2){
       //set motors to speed
