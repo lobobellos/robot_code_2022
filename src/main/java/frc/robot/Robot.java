@@ -90,9 +90,6 @@ public class Robot extends TimedRobot {
   private int climbLeftChannel = 8;
   private int climbRightChannel = 9;
 
-  //timer
-  public Timer autoTimer;
-
   @Override
   public void robotInit() {
     
@@ -135,23 +132,11 @@ public class Robot extends TimedRobot {
     uSonic.setEnabled(true);
 		Ultrasonic.setAutomaticMode(true);
 
-    //enable the timer
-    Timer autoTimer = new Timer();
-
   }
   
   @Override
-  public void autonomousInit(){
-    autoTimer.start();
-  }
-
-  @Override
-  public void autonomousPeriodic(){
-    if(autoTimer.get() <=  2){
-      m_robotDrive.driveCartesian(0.0, 0.0, 1, 0.0);
-    }else if(autoTimer.get() <=  4){
-      m_robotDrive.driveCartesian(0.0, 0.0, -1, 0.0);
-    }else if(autoTimer.get() <= 8){
+  public void autonomousPeriodic() {
+    if (stick.getRawButton(1)) {
       runlauncher();
     }
   }
@@ -306,7 +291,8 @@ public class Robot extends TimedRobot {
           m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
         }
 			}else{
-				homingStage = 1;
+				//homingStage = 1;
+        shooterRunning = false;
 			}
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
@@ -315,8 +301,7 @@ public class Robot extends TimedRobot {
       }else if(uSonic.getRangeInches() <= 110){
         m_robotDrive.driveCartesian(0.5, 0.0, 0.0, 0.0);
       }else{
-        //homingStage = 2;
-        shooterRunning = false;
+        homingStage = 2;
       }
     }else if(homingStage == 2){
       //set motors to speed
@@ -370,9 +355,6 @@ public class Robot extends TimedRobot {
   }
   
   //Makes the robot spin for a specified amount of time
-
-  // please stop using linear programming
-  //its gross
   public void spin() {
     Timer time = new Timer();
     time.start(); 
