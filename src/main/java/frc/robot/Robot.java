@@ -293,6 +293,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
     SmartDashboard.putBoolean("Extend Arms: ", extendArms);
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
+    SmartDashboard.putNumber("shooter phase",homingStage);
 	}
 
 	
@@ -301,13 +302,13 @@ public class Robot extends TimedRobot {
       //spin until facing hub
 			if(tx.getDouble(0.0) > 0.25){
         if(tx.getDouble(0.0) < 10){
-          m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
+          m_robotDrive.driveCartesian(0.0, 0.0, 0.35, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
         }
 			}else if(tx.getDouble(0.0) <= -0.25){
 				if(tx.getDouble(0.0) > -10){
-          m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
+          m_robotDrive.driveCartesian(0.0, 0.0, -0.35, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
         }
@@ -335,6 +336,8 @@ public class Robot extends TimedRobot {
         shooterRunning = false;
         m_shooterM.set(0.0);
         m_shooterT.set(0.0);
+        shooterClock.stop();
+        shooterClock.reset();
       }
     }
   }
