@@ -156,6 +156,9 @@ public class Robot extends TimedRobot {
     //turns off shooter when disabled
     shooterRunning =false;
     safeMode = false;
+    m_intakeL.set(0);
+    m_shooterM.set(0);
+    m_shooterT.set(0);
   }
 
   @Override
@@ -182,6 +185,7 @@ public class Robot extends TimedRobot {
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
     } else {
       runlauncher();
+      m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
     }
   }
 
@@ -319,11 +323,14 @@ public class Robot extends TimedRobot {
         homingStage = 2;
       }
     }else if(homingStage <= 2){
-      if(shooterClock.get() < 10){
+      if(shooterClock.get() < 2){
         m_shooterM.set(0.5);
         m_shooterT.set(0.5);
+        m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
       }else{
         shooterRunning = false;
+        m_shooterM.set(0.0);
+        m_shooterT.set(0.0);
       }
     }
   }
