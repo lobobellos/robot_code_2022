@@ -76,6 +76,8 @@ public class Robot extends TimedRobot {
   private Spark m_shooterM;
   private Spark m_shooterT;
 
+  private Timer shooterClock;
+
 
 	public NetworkTable table;
 	public NetworkTableEntry tx;
@@ -312,14 +314,17 @@ public class Robot extends TimedRobot {
       }else if(uSonic.getRangeInches() <= 50){
         m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
       }else{
-        //homingStage = 2;
-        shooterRunning = false;
-
+        shooterClock = new Timer();
+        shooterClock.start();
+        homingStage = 2;
       }
-    }else if(homingStage == 2){
-      //set motors to speed
-			m_shooterM.set(0.5);
-
+    }else if(homingStage <= 2){
+      if(shooterClock.get() < 10){
+        m_shooterM.set(0.5);
+        m_shooterT.set(0.5);
+      }else{
+        shooterRunning = false;
+      }
     }
   }
 
