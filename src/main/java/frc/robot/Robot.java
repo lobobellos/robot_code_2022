@@ -188,7 +188,6 @@ public class Robot extends TimedRobot {
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
     } else {
       runlauncher();
-      m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
     }
   }
 
@@ -300,15 +299,15 @@ public class Robot extends TimedRobot {
   public void runlauncher(){
     if(homingStage == 0){
       //spin until facing hub
-			if(tx.getDouble(0.0) > 0.25){
+			if(tx.getDouble(0.0) > 1){
         if(tx.getDouble(0.0) < 10){
-          m_robotDrive.driveCartesian(0.0, 0.0, 0.35, 0.0);
+          m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
         }
-			}else if(tx.getDouble(0.0) <= -0.25){
+			}else if(tx.getDouble(0.0) <= -1){
 				if(tx.getDouble(0.0) > -10){
-          m_robotDrive.driveCartesian(0.0, 0.0, -0.35, 0.0);
+          m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
         }else{
           m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
         }
@@ -319,9 +318,9 @@ public class Robot extends TimedRobot {
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
       if(uSonic.getRangeInches() >= 60){
-        m_robotDrive.driveCartesian(0.5, 0.0, 0.0, 0.0);
+        m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
       }else if(uSonic.getRangeInches() <= 50){
-        m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
+        m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
       }else{
         shooterClock.reset();
         shooterClock.start();
