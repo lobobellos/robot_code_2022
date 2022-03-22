@@ -26,8 +26,7 @@ Joystick trigger: start launch sequence <br>
 | Gearbox- Rearleft | 3 |
 | Intake- Left | 4 |
 | launcher- Right | 5 |
-| Arm- Left | 8 |
-| Arm-Right | 9 |
+| Arm | 8 |
 
 
 # DIO ports
