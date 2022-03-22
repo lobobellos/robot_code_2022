@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
   private static double gyroAngle = 0;
   private static double throttle;
   private static final double spinTime = 5;
+  private static boolean spinCompleted = false;
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
@@ -87,14 +88,12 @@ public class Robot extends TimedRobot {
 	public NetworkTableEntry ta;
 
   //Climbing mechanism
-  private Spark m_climbL;
-  private Spark m_climbR;
+  private Spark m_climb;
   private boolean extendArms = false;
   private boolean retractArms = true;
   private int climbButton = 4;
   private final int processTime = 6; 
-  private int climbLeftChannel = 8;
-  private int climbRightChannel = 9;
+  private int climbChannel = 8;
 
   @Override
   public void robotInit() {
@@ -109,9 +108,7 @@ public class Robot extends TimedRobot {
     m_shooterM = new Spark(mainShooterChannel);
     m_shooterT = new Spark(topShooterChannel);
 
-    m_climbL = new Spark(climbLeftChannel);
-    m_climbR = new Spark(climbRightChannel);
-    
+    m_climb = new Spark(climbChannel);
     // Invert the right side motors.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
@@ -147,15 +144,16 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousPeriodic() {
-    if (stick.getRawButton(1)) {
-      runlauncher();
+      if (spinCompleted) {
+        runlauncher();
     }
   }
 
   @Override
-  public void teleopInit() {
+  public void autonomousInit() {
     //Spins bot at initialization phase;
-    //spin();
+    spin();
+    spinCompleted = true;
   }
 
   public void disabledInit(){
@@ -355,38 +353,31 @@ public class Robot extends TimedRobot {
       Timer time = new Timer();
         //Extends or retracts arms
         if (extendArms) {
-          m_climbL.setInverted(true);
-          m_climbR.setInverted(true);
-          m_climbL.set(0.9);
-          m_climbR.set(0.9);
-          
+          m_climb.setInverted(true);
+          m_climb.set(0.9);
           while (!(time.get() <= processTime)) {
-            m_climbL.stopMotor();
-            m_climbR.stopMotor();
+            m_climb.stopMotor();
           }
-          
           retractArms = true;
           extendArms = false;
-          m_climbR.setInverted(false);
-          m_climbL.setInverted(false);
+          m_climb.setInverted(false);
           time.stop();
           return;
+          
         } else if (retractArms) {
-            m_climbL.set(0.9);
-            m_climbR.set(0.9);
+            m_climb.set(0.9);
           
             while (!(time.get() <= processTime)) {
-              m_climbL.stopMotor();
-              m_climbR.stopMotor();
+              m_climb.stopMotor();
             }
           
-          extendArms = true;
-          retractArms = false;
-          time.stop();
-          return;
-      }
+            extendArms = true;
+            retractArms = false;
+            time.stop();
+            return;
     }
   }
+}
   
   //Makes the robot spin for a specified amount of time
   public void spin() {

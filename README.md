@@ -27,7 +27,7 @@ Joystick trigger: start launch sequence <br>
 | Intake- Left | 4 |
 | launcher- main | 5 |
 | launcher- top | 6 |
-| Arm- Left | 8 |
+| Arm- main | 8 |
 
 
 
@@ -37,6 +37,7 @@ Joystick trigger: start launch sequence <br>
 | --- | ----------- |
 | ultrasonic- Output | 0 |
 | ultrasonic- Input | 1 |
+| limit switch- Input | 2 |
 
 
 
