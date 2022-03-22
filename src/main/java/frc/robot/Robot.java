@@ -31,8 +31,8 @@ public class Robot extends TimedRobot {
   private static final int kRearLeftChannel = 3;
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
-  private static final int intakeLeftChannel = 4;
-  private static final int mainShooterChannel = 5;
+  private static final int intakeLeftChannel = 5;
+  private static final int mainShooterChannel = 4;
   private static final int topShooterChannel = 6;
 
   //DIO channels
@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
         System.out.println("intake off");
       }else{
         intakeRunning = true;
-        m_intakeL.set(-0.75);
+        m_intakeL.set(0.75);
         //m_shooterM.set(-0.5);
         //m_shooterT.set(0.25);
         System.out.println("intake on");
