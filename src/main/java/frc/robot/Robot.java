@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 //Imports for robot
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -71,6 +72,7 @@ public class Robot extends TimedRobot {
   private Joystick stick;
   private ADXRS450_Gyro gyro;
   public Ultrasonic uSonic;
+  public DigitalInput limitSwitch;
 
   private Spark m_intakeL;
   private Spark m_shooterM;
@@ -121,6 +123,7 @@ public class Robot extends TimedRobot {
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
 		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
+    limitSwitch =  new DigitalInput(1);
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
