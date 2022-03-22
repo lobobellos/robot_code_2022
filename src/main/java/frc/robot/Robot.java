@@ -137,6 +137,9 @@ public class Robot extends TimedRobot {
     uSonic.setEnabled(true);
 		Ultrasonic.setAutomaticMode(true);
 
+    //define camera
+    shooterClock = new Timer();
+
   }
   
   @Override
@@ -289,6 +292,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ultrasonic", uSonic.getRangeInches());
     SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
     SmartDashboard.putBoolean("Extend Arms: ", extendArms);
+    SmartDashboard.putNumber("shooter timer",shooterClock.get());
 	}
 
 	
@@ -318,11 +322,11 @@ public class Robot extends TimedRobot {
       }else if(uSonic.getRangeInches() <= 50){
         m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
       }else{
-        shooterClock = new Timer();
+        shooterClock.reset();
         shooterClock.start();
         homingStage = 2;
       }
-    }else if(homingStage <= 2){
+    }else if(homingStage == 2){
       if(shooterClock.get() < 2){
         m_shooterM.set(0.5);
         m_shooterT.set(0.5);
