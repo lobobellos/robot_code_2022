@@ -32,7 +32,8 @@ public class Robot extends TimedRobot {
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
   private static final int intakeLeftChannel = 4;
-  private static final int intakeRightChannel = 5;
+  private static final int mainShooterChannel = 5;
+  private static final int topShooterChannel = 6;
 
   //DIO channels
   private static final int ultrasonicOutputChannel = 0;
@@ -72,7 +73,8 @@ public class Robot extends TimedRobot {
   public Ultrasonic uSonic;
 
   private Spark m_intakeL;
-  private Spark m_shooterR;
+  private Spark m_shooterM;
+  private Spark m_shooterT;
 
 
 	public NetworkTable table;
@@ -100,7 +102,8 @@ public class Robot extends TimedRobot {
     Spark rearRight = new Spark(kRearRightChannel);
 
     m_intakeL = new Spark(intakeLeftChannel);
-    m_shooterR = new Spark(intakeRightChannel);
+    m_shooterM = new Spark(mainShooterChannel);
+    m_shooterT = new Spark(topShooterChannel);
 
     m_climbL = new Spark(climbLeftChannel);
     m_climbR = new Spark(climbRightChannel);
@@ -143,12 +146,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    shooterRunning =false;
-    safeMode = false;
-
-
     //Spins bot at initialization phase;
     //spin();
+  }
+
+  public void disabledInit(){
+    //turns off shooter when disabled
+    shooterRunning =false;
+    safeMode = false;
   }
 
   @Override
@@ -236,13 +241,15 @@ public class Robot extends TimedRobot {
       intakeToggle = false;
       if(intakeRunning){
         intakeRunning = false;
-        m_shooterR.set(0);
         m_intakeL.set(0);
+        //m_shooterM.set(0);
+        //m_shooterT.set(0);
         System.out.println("intake off");
       }else{
         intakeRunning = true;
-        m_shooterR.set(-0.75);
         m_intakeL.set(-0.75);
+        //m_shooterM.set(-0.5);
+        //m_shooterT.set(0.25);
         System.out.println("intake on");
       }
     }else if(stick.getRawButton(8) == false){
@@ -311,7 +318,7 @@ public class Robot extends TimedRobot {
       }
     }else if(homingStage == 2){
       //set motors to speed
-			m_shooterR.set(0.5);
+			m_shooterM.set(0.5);
 
     }
   }
