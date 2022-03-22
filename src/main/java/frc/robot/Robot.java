@@ -304,8 +304,8 @@ public class Robot extends TimedRobot {
           m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
         }
 			}else{
-				//homingStage = 1;
-        shooterRunning = false;
+				homingStage = 1;
+        //shooterRunning = false;
 			}
     }else if(homingStage == 1){
       //if needed, move to correct distance from robot
