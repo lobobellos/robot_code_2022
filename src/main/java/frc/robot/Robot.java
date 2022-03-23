@@ -35,6 +35,9 @@ public class Robot extends TimedRobot {
   private static final int intakeLeftChannel = 5;
   private static final int mainShooterChannel = 4;
   private static final int topShooterChannel = 6;
+  private static final int climberChannel = 7;
+
+
 
   //DIO channels
   private static final int ultrasonicOutputChannel = 0;
@@ -65,8 +68,8 @@ public class Robot extends TimedRobot {
   private int homingStage = 1;
 
   
-  private static final double deadZoneX = 0;
-	private static final double deadZoneY = 0;
+  private static final double deadZoneX = 0.1;
+	private static final double deadZoneY = 0.1;
 	private static final double deadZoneZ = 0.5;
 
   private MecanumDrive m_robotDrive;
@@ -78,6 +81,7 @@ public class Robot extends TimedRobot {
   private Spark m_intakeL;
   private Spark m_shooterM;
   private Spark m_shooterT;
+
 
   private Timer shooterClock;
   private Timer climbClock;
@@ -94,7 +98,6 @@ public class Robot extends TimedRobot {
   private boolean retractArms = true;
   private int climbButton = 4;
   private final int processTime = 6; 
-  private int climbChannel = 8;
   private boolean climbRunning = false;
   private boolean climbToggle = false;
 
@@ -111,7 +114,7 @@ public class Robot extends TimedRobot {
     m_shooterM = new Spark(mainShooterChannel);
     m_shooterT = new Spark(topShooterChannel);
 
-    m_climb = new Spark(climbChannel);
+    m_climb = new Spark(climberChannel);
     // Invert the right side motors.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
@@ -263,13 +266,11 @@ public class Robot extends TimedRobot {
         m_intakeL.set(0);
         //m_shooterM.set(0);
         //m_shooterT.set(0);
-        System.out.println("intake off");
       }else{
         intakeRunning = true;
         m_intakeL.set(0.75);
         //m_shooterM.set(-0.5);
         //m_shooterT.set(0.25);
-        System.out.println("intake on");
       }
     }else if(stick.getRawButton(8) == false){
       intakeToggle = true;
@@ -284,7 +285,6 @@ public class Robot extends TimedRobot {
         shooterRunning = true;
         homingStage = 0;
       }
-      SmartDashboard.putBoolean("shooter running", shooterRunning);
     }else if(stick.getRawButton(1) == false){
       shooterToggle = true;
     }
@@ -304,6 +304,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Extend Arms: ", extendArms);
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
     SmartDashboard.putNumber("shooter phase",homingStage);
+    SmartDashboard.putBoolean("climb running",climbRunning);
 	}
 
 	
@@ -324,18 +325,25 @@ public class Robot extends TimedRobot {
         }
 			}else{
 				homingStage = 1;
-        //shooterRunning = false;
 			}
     }else if(homingStage == 1){
-      //if needed, move to correct distance from robot
-      if(uSonic.getRangeInches() >= 60){
-        m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
-      }else if(uSonic.getRangeInches() <= 50){
-        m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
+      //only run if the intake is down
+      if(uSonic.getRangeInches() >= 5 ){
+        //if needed, move to correct distance from robot
+        if(uSonic.getRangeInches() >= 60){
+          m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
+        }else if(uSonic.getRangeInches() <= 50){
+          m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
+        }else{
+          shooterClock.start();
+          homingStage = 2;
+        }
+
       }else{
-        shooterClock.start();
-        homingStage = 2;
+        //if unsafe, turn off homing sequence
+        shooterRunning = false;
       }
+
     }else if(homingStage == 2){
       if(shooterClock.get() < 2){
         m_shooterM.set(1);
