@@ -62,10 +62,14 @@ public class Robot extends TimedRobot {
   private static boolean intakeRunning = false;
   private static boolean intakeToggle = true;
 
-  //var used for toggling shooter
+  //var used for toggling targeting
+  private static boolean targetingRunning = false;
+  private static boolean targetingToggle = true;
+  private int homingStage = 1;
+
+  //vars used for targeting shooter
   private static boolean shooterRunning = false;
   private static boolean shooterToggle = true;
-  private int homingStage = 1;
 
   
   private static final double deadZoneX = 0.1;
@@ -165,7 +169,7 @@ public class Robot extends TimedRobot {
 
   public void disabledInit(){
     //turns off shooter when disabled
-    shooterRunning =false;
+    targetingRunning =false;
     safeMode = false;
     m_intakeL.set(0);
     m_shooterM.set(0);
@@ -182,7 +186,7 @@ public class Robot extends TimedRobot {
 		// display limelight x and y values
 		updateDashboard();
 		
-    if(!shooterRunning){
+    if(!targetingRunning){
       //applies safe mode if nessecary
       applySafeMode();
 
@@ -192,7 +196,10 @@ public class Robot extends TimedRobot {
       //toggle intake
       toggleIntake();
 
-      //toggle launcher
+      //toggle targeting
+      toggleTargeting();
+
+      //toggle shooter
       toggleShooter();
 
       toggleClimb();
@@ -278,15 +285,33 @@ public class Robot extends TimedRobot {
   }
 
   public void toggleShooter(){
-    //Toggles shooter motors
-    if(shooterToggle && stick.getRawButton(1)){
+    //Toggles intake motor
+    if(shooterToggle && stick.getRawButton(2)){
       shooterToggle = false;
-      if(!shooterRunning){
+      if(shooterRunning){
+        intakeRunning = false;
+        m_shooterM.set(0);
+        m_shooterT.set(0);
+      }else{
         shooterRunning = true;
+        m_shooterM.set(-0.5);
+        m_shooterT.set(0.25);
+      }
+    }else if(!stick.getRawButton(2)){
+      shooterToggle = true;
+    }
+  }
+
+  public void toggleTargeting(){
+    //Toggles shooter motors
+    if(targetingToggle && stick.getRawButton(1)){
+      targetingToggle = false;
+      if(!targetingRunning){
+        targetingRunning = true;
         homingStage = 0;
       }
     }else if(stick.getRawButton(1) == false){
-      shooterToggle = true;
+      targetingToggle = true;
     }
   }
 
@@ -296,6 +321,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY",ty.getDouble(0.0));
     SmartDashboard.putNumber("LimelightArea",ta.getDouble(0.0));
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
+    SmartDashboard.putBoolean("targeting running", targetingRunning);
     SmartDashboard.putBoolean("shooter running", shooterRunning);
     SmartDashboard.putBoolean("safeMode",safeMode);
     SmartDashboard.putBoolean("intake running", intakeRunning);
@@ -305,6 +331,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
+    SmartDashboard.putBoolean("shooter toggle", shooterToggle);
 	}
 
 	
@@ -341,7 +368,7 @@ public class Robot extends TimedRobot {
 
       }else{
         //if unsafe, turn off homing sequence
-        shooterRunning = false;
+        targetingRunning = false;
       }
 
     }else if(homingStage == 2){
@@ -350,7 +377,7 @@ public class Robot extends TimedRobot {
         m_shooterT.set(1);
         m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
       }else{
-        shooterRunning = false;
+        targetingRunning = false;
         m_shooterM.set(0.0);
         m_shooterT.set(0.0);
         shooterClock.stop();
