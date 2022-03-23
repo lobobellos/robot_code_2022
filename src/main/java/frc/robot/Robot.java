@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
 		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
-    limitSwitch =  new DigitalInput(1);
+    limitSwitch =  new DigitalInput(2);
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -323,14 +323,13 @@ public class Robot extends TimedRobot {
       }else if(uSonic.getRangeInches() <= 50){
         m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
       }else{
-        shooterClock.reset();
         shooterClock.start();
         homingStage = 2;
       }
     }else if(homingStage == 2){
       if(shooterClock.get() < 2){
-        m_shooterM.set(0.5);
-        m_shooterT.set(0.5);
+        m_shooterM.set(1);
+        m_shooterT.set(1);
         m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
       }else{
         shooterRunning = false;
