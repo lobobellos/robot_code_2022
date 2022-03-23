@@ -165,6 +165,10 @@ public class Robot extends TimedRobot {
     m_shooterT.set(0);
   }
 
+  public void disabledPeriodic(){
+    updateDashboard();
+  }
+
   @Override
   public void teleopPeriodic() {
 
