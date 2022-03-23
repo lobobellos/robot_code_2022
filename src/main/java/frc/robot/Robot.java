@@ -311,8 +311,8 @@ public class Robot extends TimedRobot {
         m_shooterT.set(0);
       }else{
         shooterRunning = true;
-        m_shooterM.set(0.75);
-        m_shooterT.set(0.75);
+        m_shooterM.set(1);
+        m_shooterT.set(1);
       }
     }else if(!stick.getRawButton(2)){
       shooterToggle = true;
@@ -349,6 +349,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
+    SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
 	}
 
 	
