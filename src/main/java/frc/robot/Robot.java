@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
       if (spinCompleted) {
-        runlauncher();
+        //runTargeting();
     }
   }
 
@@ -185,16 +185,19 @@ public class Robot extends TimedRobot {
 
 		// display limelight x and y values
 		updateDashboard();
+
+    //toggle intake
+    toggleIntake();
 		
-    if(!targetingRunning){
+    if((!targetingRunning) && (!shooterRunning)){
       //applies safe mode if nessecary
       applySafeMode();
 
       //get inputs from joystick and use them
       applyDeadzone();
 
-      //toggle intake
-      toggleIntake();
+      //turns on climb if button pressed
+      toggleClimb();
 
       //toggle targeting
       toggleTargeting();
@@ -202,13 +205,14 @@ public class Robot extends TimedRobot {
       //toggle shooter
       toggleShooter();
 
-      toggleClimb();
-
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
-    } else {
-      runlauncher();
+    } else if(targetingRunning && !shooterRunning){
+      runTargeting();
+    }else if(shooterRunning && !targetingRunning){
+      toggleShooter();
+      m_robotDrive.driveCartesian(0, 0, 0);
     }
   }
 
@@ -289,7 +293,7 @@ public class Robot extends TimedRobot {
     if(shooterToggle && stick.getRawButton(2)){
       shooterToggle = false;
       if(shooterRunning){
-        intakeRunning = false;
+        shooterRunning = false;
         m_shooterM.set(0);
         m_shooterT.set(0);
       }else{
@@ -301,6 +305,7 @@ public class Robot extends TimedRobot {
       shooterToggle = true;
     }
   }
+
 
   public void toggleTargeting(){
     //Toggles shooter motors
@@ -331,11 +336,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
-    SmartDashboard.putBoolean("shooter toggle", shooterToggle);
 	}
 
 	
-  public void runlauncher(){
+  public void runTargeting(){
     if(homingStage == 0){
       //spin until facing hub
 			if(tx.getDouble(0.0) > 1){
