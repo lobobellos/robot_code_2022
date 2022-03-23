@@ -98,10 +98,11 @@ public class Robot extends TimedRobot {
   private Spark m_climb;
   private boolean extendArms = false;
   private boolean retractArms = true;
-  private int climbButton = 4;
+  private int raiseClimbButton = 4;
+  private int lowerClimbButton = 5;
   private final int processTime = 6; 
   private boolean climbRunning = false;
-  private boolean climbToggle = false;
+  private int climbDirection = 0;
 
   @Override
   public void robotInit() {
@@ -403,14 +404,20 @@ public class Robot extends TimedRobot {
   */
   public void toggleClimb() {
     //If climbButton and stick is pressed
-    if(climbToggle && stick.getRawButton(climbButton)){
-      climbToggle = false;
+    if(stick.getRawButtonPressed(raiseClimbButton)){
       climbRunning = true;
+      climbDirection = 1;
       climbClock.reset();
       climbClock.start();
 
-    } else if(!stick.getRawButton(climbButton)) {
-      climbToggle = true;
+    }
+
+    if(stick.getRawButtonPressed(lowerClimbButton)){
+      climbRunning = true;
+      climbDirection = -1;
+      climbClock.reset();
+      climbClock.start();
+
     }
 
     //If climb is running. 
@@ -418,10 +425,11 @@ public class Robot extends TimedRobot {
       
       //Extends or retracts arms
       if(climbClock.get() <=processTime){
-        m_climb.set(0.5);
+        m_climb.set(climbDirection * 0.5);
       } else {
         m_climb.set(0.0);
         climbRunning = false;
+        climbClock.stop();
       } 
     }
   }
@@ -435,10 +443,6 @@ public class Robot extends TimedRobot {
     while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0.0, 0.0, 1.0, 0.0);
     }
-    
-    time.stop();
-    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
-    time.start();
     
      while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0.0, 0.0, -1.0, 0.0);
