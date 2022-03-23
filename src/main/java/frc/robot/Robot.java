@@ -188,6 +188,8 @@ public class Robot extends TimedRobot {
 
     //toggle intake
     toggleIntake();
+
+    runIntake();
 		
     if((!targetingRunning) && (!shooterRunning)){
       //applies safe mode if nessecary
@@ -274,17 +276,19 @@ public class Robot extends TimedRobot {
       intakeToggle = false;
       if(intakeRunning){
         intakeRunning = false;
-        m_intakeL.set(0);
-        //m_shooterM.set(0);
-        //m_shooterT.set(0);
       }else{
         intakeRunning = true;
-        m_intakeL.set(0.75);
-        //m_shooterM.set(-0.5);
-        //m_shooterT.set(0.25);
       }
     }else if(stick.getRawButton(8) == false){
       intakeToggle = true;
+    }
+  }
+
+  public void runIntake(){
+    if(intakeRunning){
+      m_intakeL.set(0.75);
+    }else{
+      m_intakeL.set(0);
     }
   }
 
