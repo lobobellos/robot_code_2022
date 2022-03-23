@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
 
 
   private Timer shooterClock;
-  private Timer climbClock;
 
 
 	public NetworkTable table;
@@ -102,7 +101,6 @@ public class Robot extends TimedRobot {
   private int lowerClimbButton = 5;
   private final int processTime = 6; 
   private boolean climbRunning = false;
-  private int climbDirection = 0;
 
   @Override
   public void robotInit() {
@@ -148,7 +146,6 @@ public class Robot extends TimedRobot {
 
     //define camera
     shooterClock = new Timer();
-    climbClock = new Timer();
 
   }
   
@@ -404,34 +401,16 @@ public class Robot extends TimedRobot {
   */
   public void toggleClimb() {
     //If climbButton and stick is pressed
-    if(stick.getRawButtonPressed(raiseClimbButton)){
-      climbRunning = true;
-      climbDirection = 1;
-      climbClock.reset();
-      climbClock.start();
+    if(stick.getRawButton(4)){
+      m_climb.set(0.5);
 
+    }else if(stick.getRawButton(5)){
+      m_climb.set(-0.5);
+
+    }else{
+      m_climb.set(0);
     }
-
-    if(stick.getRawButtonPressed(lowerClimbButton)){
-      climbRunning = true;
-      climbDirection = -1;
-      climbClock.reset();
-      climbClock.start();
-
-    }
-
-    //If climb is running. 
-    if (climbRunning) {
-      
-      //Extends or retracts arms
-      if(climbClock.get() <=processTime){
-        m_climb.set(climbDirection * 0.5);
-      } else {
-        m_climb.set(0.0);
-        climbRunning = false;
-        climbClock.stop();
-      } 
-    }
+    
   }
 
   
