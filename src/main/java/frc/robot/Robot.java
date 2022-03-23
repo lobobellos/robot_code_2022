@@ -87,6 +87,9 @@ public class Robot extends TimedRobot {
 
   private Timer shooterClock;
 
+  private boolean switchIntakeRunning = false;
+  private Timer switchIntakeTimer;
+
 
 	public NetworkTable table;
 	public NetworkTableEntry tx;
@@ -97,9 +100,6 @@ public class Robot extends TimedRobot {
   private Spark m_climb;
   private boolean extendArms = false;
   private boolean retractArms = true;
-  private int raiseClimbButton = 4;
-  private int lowerClimbButton = 5;
-  private final int processTime = 6; 
   private boolean climbRunning = false;
 
   @Override
@@ -270,9 +270,24 @@ public class Robot extends TimedRobot {
 	} 
 
   public void checkSwitch(){
-    if(limitSwitch.get()){
+    if(limitSwitch.get() && !switchIntakeRunning){
       intakeRunning = false;
+
+      switchIntakeRunning = true;
+      switchIntakeTimer.reset();
+      switchIntakeTimer.start();
     }
+
+    if(switchIntakeRunning){
+      if(switchIntakeTimer.get() <= 0.5){
+        m_intakeL.set(-0.5);
+      }else{
+        switchIntakeTimer.stop();
+        switchIntakeRunning = false;
+        m_intakeL.set(-0.0);
+      }
+    }
+
   }
 
   public void toggleIntake(){
