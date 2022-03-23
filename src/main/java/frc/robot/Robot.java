@@ -64,12 +64,10 @@ public class Robot extends TimedRobot {
 
   //var used for toggling targeting
   private static boolean targetingRunning = false;
-  private static boolean targetingToggle = true;
   private int homingStage = 1;
 
   //vars used for targeting shooter
   private static boolean shooterRunning = false;
-  private static boolean shooterToggle = true;
 
   
   private static final double deadZoneX = 0.1;
@@ -303,8 +301,7 @@ public class Robot extends TimedRobot {
 
   public void toggleShooter(){
     //Toggles intake motor
-    if(shooterToggle && stick.getRawButton(2)){
-      shooterToggle = false;
+    if(stick.getRawButtonPressed(2)){
       if(shooterRunning){
         shooterRunning = false;
         m_shooterM.set(0);
@@ -314,22 +311,17 @@ public class Robot extends TimedRobot {
         m_shooterM.set(1);
         m_shooterT.set(1);
       }
-    }else if(!stick.getRawButton(2)){
-      shooterToggle = true;
     }
   }
 
 
   public void toggleTargeting(){
     //Toggles shooter motors
-    if(targetingToggle && stick.getRawButton(1)){
-      targetingToggle = false;
+    if(stick.getRawButtonPressed(1)){
       if(!targetingRunning){
         targetingRunning = true;
         homingStage = 0;
       }
-    }else if(stick.getRawButton(1) == false){
-      targetingToggle = true;
     }
   }
 
