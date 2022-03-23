@@ -16,6 +16,11 @@ Joystick side button: toggle safe mode <br>
 Joystick side button: toggle intake motors<br>
 Joystick trigger: start launch sequence <br>
 
+Joystick-4 : use in pits -reload
+Joysting-5 : use in game - deploy
+
+joystick button 2 - toggle shooter
+
 
 # PWM Ports
 | motor | port |
