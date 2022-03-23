@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   private Spark m_shooterT;
 
   private Timer shooterClock;
+  private Timer climbClock;
 
 
 	public NetworkTable table;
@@ -94,6 +95,8 @@ public class Robot extends TimedRobot {
   private int climbButton = 4;
   private final int processTime = 6; 
   private int climbChannel = 8;
+  private boolean climbRunning = false;
+  private boolean climbToggle = false;
 
   @Override
   public void robotInit() {
@@ -139,6 +142,7 @@ public class Robot extends TimedRobot {
 
     //define camera
     shooterClock = new Timer();
+    climbClock = new Timer();
 
   }
   
@@ -187,6 +191,8 @@ public class Robot extends TimedRobot {
 
       //toggle launcher
       toggleShooter();
+
+      toggleClimb();
 
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
@@ -351,36 +357,30 @@ public class Robot extends TimedRobot {
   @precondition arms must be retracted before doing pressing button up.
   */
   public void toggleClimb() {
-    //If button is pressed
-    if (stick.getRawButton(climbButton)) {
-      Timer time = new Timer();
-        //Extends or retracts arms
-        if (extendArms) {
-          m_climb.setInverted(true);
-          m_climb.set(0.9);
-          while (!(time.get() <= processTime)) {
-            m_climb.stopMotor();
-          }
-          retractArms = true;
-          extendArms = false;
-          m_climb.setInverted(false);
-          time.stop();
-          return;
-          
-        } else if (retractArms) {
-            m_climb.set(0.9);
-          
-            while (!(time.get() <= processTime)) {
-              m_climb.stopMotor();
-            }
-          
-            extendArms = true;
-            retractArms = false;
-            time.stop();
-            return;
+    //If climbButton and stick is pressed
+    if(climbToggle && stick.getRawButton(climbButton)){
+      climbToggle = false;
+      climbRunning = true;
+      climbClock.reset();
+      climbClock.start();
+
+    } else if(!stick.getRawButton(climbButton)) {
+      climbToggle = true;
+    }
+
+    //If climb is running. 
+    if (climbRunning) {
+      
+      //Extends or retracts arms
+      if(climbClock.get() <=processTime){
+        m_climb.set(0.5);
+      } else {
+        m_climb.set(0.0);
+        climbRunning = false;
+      } 
     }
   }
-}
+
   
   //Makes the robot spin for a specified amount of time
   public void spin() {
