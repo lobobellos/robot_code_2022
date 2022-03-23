@@ -186,6 +186,9 @@ public class Robot extends TimedRobot {
 		// display limelight x and y values
 		updateDashboard();
 
+    //check limit switch
+    checkSwitch(); 
+
     //toggle intake
     toggleIntake();
 
@@ -270,6 +273,12 @@ public class Robot extends TimedRobot {
   
 	} 
 
+  public void checkSwitch(){
+    if(limitSwitch.get()){
+      intakeRunning = false;
+    }
+  }
+
   public void toggleIntake(){
     //Toggles intake motor
     if(intakeToggle && stick.getRawButton(8)){
@@ -302,8 +311,8 @@ public class Robot extends TimedRobot {
         m_shooterT.set(0);
       }else{
         shooterRunning = true;
-        m_shooterM.set(-0.5);
-        m_shooterT.set(0.25);
+        m_shooterM.set(0.75);
+        m_shooterT.set(0.75);
       }
     }else if(!stick.getRawButton(2)){
       shooterToggle = true;
