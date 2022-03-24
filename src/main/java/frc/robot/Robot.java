@@ -86,9 +86,11 @@ public class Robot extends TimedRobot {
 
 
   private Timer shooterClock;
+  private Timer manualShooterClock;
 
   private boolean switchIntakeRunning = false;
   private Timer switchIntakeTimer;
+  private Boolean hasBall = false;
 
 
 	public NetworkTable table;
@@ -128,6 +130,9 @@ public class Robot extends TimedRobot {
     gyro = new ADXRS450_Gyro();
 		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
     limitSwitch =  new DigitalInput(2);
+    switchIntakeTimer = new Timer();
+
+    manualShooterClock = new Timer();
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -270,7 +275,7 @@ public class Robot extends TimedRobot {
 	} 
 
   public void checkSwitch(){
-    if(limitSwitch.get() && !switchIntakeRunning){
+    if(limitSwitch.get() && !switchIntakeRunning && !hasBall){
       intakeRunning = false;
 
       switchIntakeRunning = true;
@@ -280,11 +285,16 @@ public class Robot extends TimedRobot {
 
     if(switchIntakeRunning){
       if(switchIntakeTimer.get() <= 0.5){
+        m_intakeL.set(0.75);
+      }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 1){
         m_intakeL.set(-0.5);
+        m_shooterM.set(-0.5);
       }else{
         switchIntakeTimer.stop();
+        m_shooterM.set(0);
         switchIntakeRunning = false;
-        m_intakeL.set(-0.0);
+        m_intakeL.stopMotor();
+        hasBall = true;
       }
     }
 
@@ -306,23 +316,42 @@ public class Robot extends TimedRobot {
 
   public void runIntake(){
     if(intakeRunning){
-      m_intakeL.set(0.75);
-    }else{
+      m_intakeL.set(0.65);
+    }else if(!switchIntakeRunning && !shooterRunning){
       m_intakeL.set(0);
     }
   }
 
   public void toggleShooter(){
+
+    
+
     //Toggles intake motor
     if(stick.getRawButtonPressed(2)){
       if(shooterRunning){
         shooterRunning = false;
-        m_shooterM.set(0);
-        m_shooterT.set(0);
+        manualShooterClock.stop();
+
       }else{
         shooterRunning = true;
+        manualShooterClock.reset();
+        manualShooterClock.start();
+      }
+    }
+    
+  }
+
+  public void runShooter(){
+    if(shooterRunning){
+      if(manualShooterClock.get() <= 1){
         m_shooterM.set(1);
         m_shooterT.set(1);
+      }else if(manualShooterClock.get() >1 && manualShooterClock.get() < 4){
+        m_intakeL.set(1);
+      }else{
+        m_shooterM.set(0);
+        m_shooterT.set(0);
+        m_intakeL.set(0);
       }
     }
   }
@@ -354,6 +383,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter timer",shooterClock.get());
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
+    SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
 	}
 
