@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
   //var used for toggling intake
   private static boolean intakeRunning = false;
   private static boolean intakeToggle = true;
+  private double shootSpeed = 0.7;
 
   //var used for toggling targeting
   private static boolean targetingRunning = false;
@@ -86,11 +87,11 @@ public class Robot extends TimedRobot {
 
 
   private Timer shooterClock;
-  private Timer manualShooterClock;
 
   private boolean switchIntakeRunning = false;
   private Timer switchIntakeTimer;
   private Boolean hasBall = false;
+  private Boolean targetingCompleted = false;
 
 
 	public NetworkTable table;
@@ -116,13 +117,13 @@ public class Robot extends TimedRobot {
     m_intakeL = new Spark(intakeLeftChannel);
     m_shooterM = new Spark(mainShooterChannel);
     m_shooterT = new Spark(topShooterChannel);
-
+    
     m_climb = new Spark(climberChannel);
     // Invert the right side motors.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
     m_intakeL.setInverted(true);
-
+    
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
 		//declare stick, gyro, and ultrasonic
@@ -132,7 +133,6 @@ public class Robot extends TimedRobot {
     limitSwitch =  new DigitalInput(2);
     switchIntakeTimer = new Timer();
 
-    manualShooterClock = new Timer();
 
 		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -149,9 +149,9 @@ public class Robot extends TimedRobot {
     uSonic.setEnabled(true);
 		Ultrasonic.setAutomaticMode(true);
 
-    //define camera
+    //clocks
     shooterClock = new Timer();
-
+    switchIntakeTimer = new Timer();
   }
   
   @Override
@@ -187,15 +187,10 @@ public class Robot extends TimedRobot {
 		// display limelight x and y values
 		updateDashboard();
 
-    //check limit switch
-    checkSwitch(); 
+    //toggle shooter
+    toggleShooter();
 
-    //toggle intake
-    toggleIntake();
-
-    runIntake();
-		
-    if((!targetingRunning) && (!shooterRunning)){
+    if(!shooterRunning){
       //applies safe mode if nessecary
       applySafeMode();
 
@@ -205,21 +200,12 @@ public class Robot extends TimedRobot {
       //turns on climb if button pressed
       toggleClimb();
 
-      //toggle targeting
-      toggleTargeting();
-
-      //toggle shooter
-      toggleShooter();
 
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
-    } else if(targetingRunning && !shooterRunning){
-      runTargeting();
-    }else if(shooterRunning && !targetingRunning){
-      toggleShooter();
+    } else{
       runShooter();
-      m_robotDrive.driveCartesian(0, 0, 0);
     }
   }
 
@@ -272,87 +258,56 @@ public class Robot extends TimedRobot {
     }else{
       gyroAngle = 0.0;
     }
-  
 	} 
+	
+		public void toggleShooter(){
+			if(stick.getRawButtonPressed(1)){
+				shooterRunning = true;
+        targetingCompleted = false;
+				//start spinning the intake
+				m_intakeL.set(0.5);
 
-  public void checkSwitch(){
-    if(limitSwitch.get() && !switchIntakeRunning && !hasBall){
-      intakeRunning = false;
+				homingStage = 0;
+			}
+		}
+	
+  public void runShooter() {
+    
+    m_robotDrive.driveCartesian(0, 0, 0);
 
-      switchIntakeRunning = true;
+    if (limitSwitch.get() && !hasBall) {
+      hasBall = true;
+      //start timer
       switchIntakeTimer.reset();
       switchIntakeTimer.start();
-      intakeRunning = false;
-    }
-
-    if(switchIntakeRunning){
-      if(switchIntakeTimer.get() <= 0.5){
-        m_intakeL.set(0.75);
-      }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 1){
-        m_intakeL.set(-0.5);
-        m_shooterM.set(-0.5);
-      }else{
-        m_shooterM.set(0);
-        switchIntakeRunning = false;
-        m_intakeL.stopMotor();
-        hasBall = true;
+    } 
+		// if has ball, loop runs continuously in periodic.
+    if (hasBall) {
+        if(switchIntakeTimer.get() <= 0.5){
+          //stop the motor 0.5 secs after running intake
+          m_intakeL.set(0.0);
+        }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 1.0){
+          //shoot ball out for half a sec
+          m_intakeL.set(-0.5);
+          m_shooterM.set(-0.5);
+        }else if(switchIntakeTimer.get() > 1.0 && switchIntakeTimer.get() <= 2.0){
+          //Startup motors for shooter
+          m_shooterM.set(shootSpeed);
+          m_shooterT.set(shootSpeed);
+        }else if (!targetingCompleted && switchIntakeTimer.get() >= 2.0){
+					//target the hub
+					runTargeting(); 
+        }else {
+          //stop everything
+          switchIntakeTimer.stop();
+          hasBall = false;
+          m_shooterM.set(0);
+          m_shooterT.set(0);
+          m_intakeL.set(0.0);
+          return;
+        }
       }
     }
-
-  }
-
-  public void toggleIntake(){
-    //Toggles intake motor
-    if(intakeToggle && stick.getRawButton(8)){
-      intakeToggle = false;
-      if(intakeRunning){
-        intakeRunning = false;
-      }else{
-        intakeRunning = true;
-      }
-    }else if(stick.getRawButton(8) == false){
-      intakeToggle = true;
-    }
-  }
-
-  public void runIntake(){
-    if(intakeRunning){
-      m_intakeL.set(0.65);
-    }else if(!switchIntakeRunning && !shooterRunning){
-      m_intakeL.set(0);
-    }
-  }
-
-  public void toggleShooter(){
-
-    //Toggles intake motor
-    if(stick.getRawButtonPressed(2)){
-
-        shooterRunning = true;
-        manualShooterClock.reset();
-        manualShooterClock.start();
-
-    }
-    
-  }
-
-  public void runShooter(){
-    if(shooterRunning){
-      if(manualShooterClock.get() <= 1){
-        m_shooterM.set(1);
-        m_shooterT.set(1);
-      }else if(manualShooterClock.get() >1 && manualShooterClock.get() < 4){
-        m_intakeL.set(1);
-      }else{
-        m_shooterM.set(0);
-        m_shooterT.set(0);
-        m_intakeL.set(0);
-
-        shooterRunning = false;
-        manualShooterClock.stop();
-      }
-    }
-  }
 
 
   public void toggleTargeting(){
@@ -382,7 +337,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
-    SmartDashboard.putNumber("manual shooter clock",manualShooterClock.get());
 	}
 
 	
@@ -413,6 +367,7 @@ public class Robot extends TimedRobot {
         }else if(uSonic.getRangeInches() <= 50){
           m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
         }else{
+					shooterClock.reset();
           shooterClock.start();
           homingStage = 2;
         }
@@ -423,25 +378,16 @@ public class Robot extends TimedRobot {
       }
 
     }else if(homingStage == 2){
-      if(shooterClock.get() < 2){
-        m_shooterM.set(1);
-        m_shooterT.set(1);
-        m_robotDrive.driveCartesian(0.0, 0.0, 0.0, gyroAngle);
-      }else{
-        targetingRunning = false;
-        m_shooterM.set(0.0);
-        m_shooterT.set(0.0);
-        shooterClock.stop();
-        shooterClock.reset();
-      }
-    }
+			//pull the ball in and launch!
+      m_intakeL.set(1);
+			if(shooterClock.get() >= 4){
+				m_intakeL.set(1);
+				targetingCompleted = true;
+			}
+		}
   }
 
-/**
-  *Toggles the climbing mechanism
-  *When the button is pressed, and either extend or retract is true, it will do the opposite. 
-  @precondition arms must be retracted before doing pressing button up.
-  */
+//Bot goes up on button 4, continue holding to make it go down. Press 5 to retract arms (manual intervention needed, pull rachet )
   public void toggleClimb() {
     //If climbButton and stick is pressed
     if(stick.getRawButton(4)){
@@ -453,7 +399,6 @@ public class Robot extends TimedRobot {
     }else{
       m_climb.set(0);
     }
-    
   }
 
   
