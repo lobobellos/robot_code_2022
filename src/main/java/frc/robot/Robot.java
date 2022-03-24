@@ -218,6 +218,7 @@ public class Robot extends TimedRobot {
       runTargeting();
     }else if(shooterRunning && !targetingRunning){
       toggleShooter();
+      runShooter();
       m_robotDrive.driveCartesian(0, 0, 0);
     }
   }
@@ -281,6 +282,7 @@ public class Robot extends TimedRobot {
       switchIntakeRunning = true;
       switchIntakeTimer.reset();
       switchIntakeTimer.start();
+      intakeRunning = false;
     }
 
     if(switchIntakeRunning){
@@ -290,7 +292,6 @@ public class Robot extends TimedRobot {
         m_intakeL.set(-0.5);
         m_shooterM.set(-0.5);
       }else{
-        switchIntakeTimer.stop();
         m_shooterM.set(0);
         switchIntakeRunning = false;
         m_intakeL.stopMotor();
@@ -324,19 +325,13 @@ public class Robot extends TimedRobot {
 
   public void toggleShooter(){
 
-    
-
     //Toggles intake motor
     if(stick.getRawButtonPressed(2)){
-      if(shooterRunning){
-        shooterRunning = false;
-        manualShooterClock.stop();
 
-      }else{
         shooterRunning = true;
         manualShooterClock.reset();
         manualShooterClock.start();
-      }
+
     }
     
   }
@@ -352,6 +347,9 @@ public class Robot extends TimedRobot {
         m_shooterM.set(0);
         m_shooterT.set(0);
         m_intakeL.set(0);
+
+        shooterRunning = false;
+        manualShooterClock.stop();
       }
     }
   }
@@ -384,7 +382,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
-    SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
+    SmartDashboard.putNumber("manual shooter clock",manualShooterClock.get());
 	}
 
 	
