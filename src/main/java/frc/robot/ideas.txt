@@ -1,11 +1,17 @@
 
 
 1) turn on intake
+
+allow movement
+
 2) wait for switch press
 3) turn off intake the moment the sensor is triggered
 4) start timer
 5) for first 0.5 seconds, push the ball out
 6) speed up shooter for 1 sec
+
+allow movement
+
 7) turn on intake 
 keep running to allow the ball to go through 
 

@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
 
   //var used for toggling intake
   private static boolean intakeRunning = false;
-  private static boolean intakeToggle = true;
   private double shootSpeed = 0.7;
 
   //var used for toggling targeting
@@ -88,10 +87,11 @@ public class Robot extends TimedRobot {
 
   private Timer shooterClock;
 
-  private boolean switchIntakeRunning = false;
   private Timer switchIntakeTimer;
   private Boolean hasBall = false;
   private Boolean targetingCompleted = false;
+  private Boolean secondaryMovement = false;
+  private Boolean runTargeting = false;
 
 
 	public NetworkTable table;
@@ -261,7 +261,7 @@ public class Robot extends TimedRobot {
 	} 
 	
 		public void toggleShooter(){
-			if(stick.getRawButtonPressed(1)){
+			if(stick.getRawButtonPressed(1) && !shooterRunning){
 				shooterRunning = true;
         targetingCompleted = false;
 				//start spinning the intake
@@ -270,13 +270,17 @@ public class Robot extends TimedRobot {
 				homingStage = 0;
 			}
 		}
-	
+  
+//Runs shooter and intake
   public void runShooter() {
-    
-    m_robotDrive.driveCartesian(0, 0, 0);
+
+		if(!hasBall){
+			m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+		}
 
     if (limitSwitch.get() && !hasBall) {
       hasBall = true;
+      m_robotDrive.driveCartesian(0, 0, 0);
       //start timer
       switchIntakeTimer.reset();
       switchIntakeTimer.start();
@@ -294,8 +298,16 @@ public class Robot extends TimedRobot {
           //Startup motors for shooter
           m_shooterM.set(shootSpeed);
           m_shooterT.set(shootSpeed);
-        }else if (!targetingCompleted && switchIntakeTimer.get() >= 2.0){
-					//target the hub
+					secondaryMovement = true;
+				}else if(secondaryMovement){
+					//allow movement
+					m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+					if(stick.getRawButtonPressed(1)){
+						secondaryMovement = false;
+						runTargeting = true;
+					}
+				} else if (!targetingCompleted && runTargeting) {
+					m_robotDrive.driveCartesian(0, 0, 0);
 					runTargeting(); 
         }else {
           //stop everything
