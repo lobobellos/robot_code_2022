@@ -4,40 +4,54 @@
 
 package frc.robot;
 
+//import cameraServer
+import edu.wpi.first.cameraserver.CameraServer;
+
+
 //imports for managing limelight
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-//imports for robot
+//Imports for robot
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.Timer;
 
-//build off of a demo mecanum drive program
+// Build off of a demo mecanum drive program
 public class Robot extends TimedRobot {
+
+  //PWM channels
   private static final int kFrontLeftChannel = 2;
   private static final int kRearLeftChannel = 3;
   private static final int kFrontRightChannel = 1;
   private static final int kRearRightChannel = 0;
+  private static final int intakeLeftChannel = 5;
+  private static final int mainShooterChannel = 4;
+  private static final int topShooterChannel = 6;
+  private static final int climberChannel = 7;
 
-  private static final int intakeLeftChannel = 4;
-  private static final int intakeRightChannel = 5;
-  private static final int l_bottomChannel = 6;
-  private static final int l_topChannel = 7;
+
+
+  //DIO channels
+  private static final int ultrasonicOutputChannel = 0;
+  private static final int ultrasonicInputChannel = 1;
 
   private static double stickX = 0.0;
 	private static double stickY = 0;
 	private static double stickZ = 0;
   private static double gyroAngle = 0;
   private static double throttle;
+  private static final double spinTime = 5;
+  private static boolean spinCompleted = false;
 
   private static final int stickChannel = 0;
-
   private static final boolean useGyro = true;
 
   //vars used for toggling safemode
@@ -47,34 +61,53 @@ public class Robot extends TimedRobot {
   //var used for toggling intake
   private static boolean intakeRunning = false;
   private static boolean intakeToggle = true;
+  private double shootSpeed = 0.7;
 
-  //var used for toggling shooter
-  private static boolean shooterRunning = false;
-  private static boolean shooterToggle = true;
+  //var used for toggling targeting
+  private static boolean targetingRunning = false;
   private int homingStage = 1;
 
-  private static final double deadZoneX = 0;
-	private static final double deadZoneY = 0;
-	private static final double deadZoneZ = 0;
+  //vars used for targeting shooter
+  private static boolean shooterRunning = false;
+
+  
+  private static final double deadZoneX = 0.1;
+	private static final double deadZoneY = 0.1;
+	private static final double deadZoneZ = 0.5;
 
   private MecanumDrive m_robotDrive;
   private Joystick stick;
   private ADXRS450_Gyro gyro;
-  private Ultrasonic uSonic;
+  public Ultrasonic uSonic;
+  public DigitalInput limitSwitch;
 
   private Spark m_intakeL;
-  private Spark m_intakeR;
+  private Spark m_shooterM;
+  private Spark m_shooterT;
 
-  private Spark m_launcherBottom;
-  private Spark m_launcherTop;
+
+  private Timer shooterClock;
+
+  private boolean switchIntakeRunning = false;
+  private Timer switchIntakeTimer;
+  private Boolean hasBall = false;
+  private Boolean targetingCompleted = false;
+
 
 	public NetworkTable table;
 	public NetworkTableEntry tx;
 	public NetworkTableEntry ty;
 	public NetworkTableEntry ta;
 
+  //Climbing mechanism
+  private Spark m_climb;
+  private boolean extendArms = false;
+  private boolean retractArms = true;
+  private boolean climbRunning = false;
+
   @Override
   public void robotInit() {
+    
     //declare motor controllers
     Spark frontLeft = new Spark(kFrontLeftChannel);
     Spark rearLeft = new Spark(kRearLeftChannel);
@@ -82,38 +115,81 @@ public class Robot extends TimedRobot {
     Spark rearRight = new Spark(kRearRightChannel);
 
     m_intakeL = new Spark(intakeLeftChannel);
-    m_intakeR = new Spark(intakeRightChannel);
-    m_launcherBottom = new Spark(l_bottomChannel);
-    m_launcherTop = new Spark(l_topChannel);
-
-
-
+    m_shooterM = new Spark(mainShooterChannel);
+    m_shooterT = new Spark(topShooterChannel);
+    
+    m_climb = new Spark(climberChannel);
     // Invert the right side motors.
     frontRight.setInverted(true);
     rearRight.setInverted(true);
     m_intakeL.setInverted(true);
-
+    
     m_robotDrive = new MecanumDrive(frontLeft, rearLeft, frontRight, rearRight);
 
-		//declare stick and gyro
+		//declare stick, gyro, and ultrasonic
     stick = new Joystick(stickChannel);
     gyro = new ADXRS450_Gyro();
+		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
+    limitSwitch =  new DigitalInput(2);
+    switchIntakeTimer = new Timer();
 
-		//add limelight and declare methods to get limelight data
+
+		// Add limelight and declare methods to get limelight data
 		table = NetworkTableInstance.getDefault().getTable("limelight");
 		tx = table.getEntry("tx");
 		ty = table.getEntry("ty");
 		ta = table.getEntry("ta");
 
+		//initialize cameraServer
+		CameraServer.startAutomaticCapture();
+
+		//calibrate gyro
     gyro.calibrate();
+		//calibrate ultrasonic sensor
+    uSonic.setEnabled(true);
+		Ultrasonic.setAutomaticMode(true);
+
+    //clocks
+    shooterClock = new Timer();
+    switchIntakeTimer = new Timer();
+  }
+  
+  @Override
+  public void autonomousPeriodic() {
+      if (spinCompleted) {
+        //runTargeting();
+    }
+  }
+
+  @Override
+  public void autonomousInit() {
+    //Spins bot at initialization phase;
+    spin();
+    spinCompleted = true;
+  }
+
+  public void disabledInit(){
+    //turns off shooter when disabled
+    targetingRunning =false;
+    safeMode = false;
+    m_intakeL.set(0);
+    m_shooterM.set(0);
+    m_shooterT.set(0);
+  }
+
+  public void disabledPeriodic(){
+    updateDashboard();
   }
 
   @Override
   public void teleopPeriodic() {
 
-			// display limelight x and y values
-		displayLimelight();
-		
+		// display limelight x and y values
+		updateDashboard();
+
+    //toggle shooter
+    toggleShooter();
+
     if(!shooterRunning){
       //applies safe mode if nessecary
       applySafeMode();
@@ -121,22 +197,19 @@ public class Robot extends TimedRobot {
       //get inputs from joystick and use them
       applyDeadzone();
 
-      //toggle intake
-      toggleIntake();
+      //turns on climb if button pressed
+      toggleClimb();
 
-      //toggle launcher
-      toggleShooter();
 
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
-    }else{
-      runlauncher();
+    } else{
+      runShooter();
     }
   }
 
   public void applySafeMode(){
-
     //Toggles safe mode
     if(safeModeToggle && stick.getRawButton(7)){
       safeModeToggle = false;
@@ -154,7 +227,7 @@ public class Robot extends TimedRobot {
     //applies safe mode if nessecary
     if(safeMode){
       throttle = 0.3;
-    }else{
+    } else {
       //parse throttle (min:0.26 , max:1)
       throttle = ((-stick.getThrottle())+1.7)/2.7;
     }
@@ -185,75 +258,165 @@ public class Robot extends TimedRobot {
     }else{
       gyroAngle = 0.0;
     }
-  
-	}
+	} 
+	
+		public void toggleShooter(){
+			if(stick.getRawButtonPressed(1)){
+				shooterRunning = true;
+        targetingCompleted = false;
+				//start spinning the intake
+				m_intakeL.set(0.5);
 
-  public void toggleIntake(){
-    //Toggles intake motor
-    if(intakeToggle && stick.getRawButton(8)){
-      intakeToggle = false;
-      if(intakeRunning){
-        intakeRunning = false;
-        m_intakeR.set(0);
-        m_intakeL.set(0);
-        System.out.println("intake off");
-      }else{
-        intakeRunning = true;
-        m_intakeR.set(0.5);
-        m_intakeL.set(0.5);
-        System.out.println("intake on");
+				homingStage = 0;
+			}
+		}
+	
+  public void runShooter() {
+    
+    m_robotDrive.driveCartesian(0, 0, 0);
+
+    if (limitSwitch.get() && !hasBall) {
+      hasBall = true;
+      //start timer
+      switchIntakeTimer.reset();
+      switchIntakeTimer.start();
+    } 
+		// if has ball, loop runs continuously in periodic.
+    if (hasBall) {
+        if(switchIntakeTimer.get() <= 0.5){
+          //stop the motor 0.5 secs after running intake
+          m_intakeL.set(0.0);
+        }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 1.0){
+          //shoot ball out for half a sec
+          m_intakeL.set(-0.5);
+          m_shooterM.set(-0.5);
+        }else if(switchIntakeTimer.get() > 1.0 && switchIntakeTimer.get() <= 2.0){
+          //Startup motors for shooter
+          m_shooterM.set(shootSpeed);
+          m_shooterT.set(shootSpeed);
+        }else if (!targetingCompleted && switchIntakeTimer.get() >= 2.0){
+					//target the hub
+					runTargeting(); 
+        }else {
+          //stop everything
+          switchIntakeTimer.stop();
+          hasBall = false;
+          m_shooterM.set(0);
+          m_shooterT.set(0);
+          m_intakeL.set(0.0);
+          return;
+        }
       }
-    }else if(stick.getRawButton(8) == false){
-      intakeToggle = true;
     }
-  }
 
-  public void toggleShooter(){
+
+  public void toggleTargeting(){
     //Toggles shooter motors
-    if(shooterToggle && stick.getRawButton(1)){
-      shooterToggle = false;
-      if(!shooterRunning){
-        shooterRunning = true;
+    if(stick.getRawButtonPressed(1)){
+      if(!targetingRunning){
+        targetingRunning = true;
         homingStage = 0;
       }
-      SmartDashboard.putBoolean("shooter running", shooterRunning);
-    }else if(stick.getRawButton(1) == false){
-      shooterToggle = true;
     }
   }
 
-	public void displayLimelight(){
+	public void updateDashboard(){
 		//post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX",tx.getDouble(0.0));
     SmartDashboard.putNumber("LimelightY",ty.getDouble(0.0));
     SmartDashboard.putNumber("LimelightArea",ta.getDouble(0.0));
     SmartDashboard.putNumber("GyroAngle",gyro.getAngle());
+    SmartDashboard.putBoolean("targeting running", targetingRunning);
+    SmartDashboard.putBoolean("shooter running", shooterRunning);
+    SmartDashboard.putBoolean("safeMode",safeMode);
+    SmartDashboard.putBoolean("intake running", intakeRunning);
+    SmartDashboard.putNumber("ultrasonic", uSonic.getRangeInches());
+    SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
+    SmartDashboard.putBoolean("Extend Arms: ", extendArms);
+    SmartDashboard.putNumber("shooter timer",shooterClock.get());
+    SmartDashboard.putNumber("shooter phase",homingStage);
+    SmartDashboard.putBoolean("climb running",climbRunning);
+    SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
 	}
 
 	
-  public void runlauncher(){
+  public void runTargeting(){
     if(homingStage == 0){
       //spin until facing hub
-			if(tx.getDouble(0.0) >0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, -0.1, 0.0);
-			}else if(tx.getDouble(0.0) <= -0.1){
-				m_robotDrive.driveCartesian(0.0, 0.0, 0.1, 0.0);
+			if(tx.getDouble(0.0) > 1){
+        if(tx.getDouble(0.0) < 10){
+          m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
+        }else{
+          m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
+        }
+			}else if(tx.getDouble(0.0) <= -1){
+				if(tx.getDouble(0.0) > -10){
+          m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
+        }else{
+          m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
+        }
 			}else{
 				homingStage = 1;
 			}
-
-
     }else if(homingStage == 1){
-      //if needed, move to correct distance from robot
-      if(uSonic.getRangeInches() >= 100){
-        m_robotDrive.driveCartesian(-0.5, 0.0, 0.0, 0.0);
-      }else if(uSonic.getRangeInches() <= 110){
-        m_robotDrive.driveCartesian(0.5, 0.0, 0.0, 0.0);
+      //only run if the intake is down
+      if(uSonic.getRangeInches() >= 5 ){
+        //if needed, move to correct distance from robot
+        if(uSonic.getRangeInches() >= 60){
+          m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
+        }else if(uSonic.getRangeInches() <= 50){
+          m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
+        }else{
+					shooterClock.reset();
+          shooterClock.start();
+          homingStage = 2;
+        }
+
       }else{
-        homingStage = 2;
+        //if unsafe, turn off homing sequence
+        targetingRunning = false;
       }
+
     }else if(homingStage == 2){
-      //set motors to speed
+			//pull the ball in and launch!
+      m_intakeL.set(1);
+			if(shooterClock.get() >= 4){
+				m_intakeL.set(1);
+				targetingCompleted = true;
+			}
+		}
+  }
+
+//Bot goes up on button 4, continue holding to make it go down. Press 5 to retract arms (manual intervention needed, pull rachet )
+  public void toggleClimb() {
+    //If climbButton and stick is pressed
+    if(stick.getRawButton(4)){
+      m_climb.set(0.5);
+
+    }else if(stick.getRawButton(5)){
+      m_climb.set(-0.5);
+
+    }else{
+      m_climb.set(0);
     }
+  }
+
+  
+  //Makes the robot spin for a specified amount of time
+  public void spin() {
+    Timer time = new Timer();
+    time.start(); 
+    
+    while (time.get() <= spinTime / 2) {
+      m_robotDrive.driveCartesian(0.0, 0.0, 1.0, 0.0);
+    }
+    
+     while (time.get() <= spinTime / 2) {
+      m_robotDrive.driveCartesian(0.0, 0.0, -1.0, 0.0);
+    }
+  
+    time.stop();
+    m_robotDrive.driveCartesian(0.0, 0.0, 0.0, 0.0);
+    return;
   }
 }
