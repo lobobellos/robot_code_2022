@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
 
   //var used for toggling intake
   private static boolean intakeRunning = false;
-  private static boolean intakeToggle = true;
   private double shootSpeed = 0.7;
 
   //var used for toggling targeting
@@ -88,10 +87,16 @@ public class Robot extends TimedRobot {
 
   private Timer shooterClock;
 
-  private boolean switchIntakeRunning = false;
   private Timer switchIntakeTimer;
-  private Boolean hasBall = false;
-  private Boolean targetingCompleted = false;
+  private boolean hasBall = false;
+  private boolean targetingCompleted = false;
+  private boolean secondaryMovement = false;
+  private boolean runTargeting = false;
+  private boolean runIntake = false;
+
+  private boolean motorStartup =false;
+
+  private boolean sonicAlign = false;
 
 
 	public NetworkTable table;
@@ -175,6 +180,7 @@ public class Robot extends TimedRobot {
     m_intakeL.set(0);
     m_shooterM.set(0);
     m_shooterT.set(0);
+    sonicAlign = false;
   }
 
   public void disabledPeriodic(){
@@ -190,12 +196,14 @@ public class Robot extends TimedRobot {
     //toggle shooter
     toggleShooter();
 
-    if(!shooterRunning){
-      //applies safe mode if nessecary
-      applySafeMode();
+    //applies safe mode if nessecary
+    applySafeMode();
 
-      //get inputs from joystick and use them
-      applyDeadzone();
+    //get inputs from joystick and use them
+    applyDeadzone();
+
+    if(!shooterRunning){
+      
 
       //turns on climb if button pressed
       toggleClimb();
@@ -261,7 +269,10 @@ public class Robot extends TimedRobot {
 	} 
 	
 		public void toggleShooter(){
-			if(stick.getRawButtonPressed(1)){
+			if(stick.getRawButtonPressed(1) && !shooterRunning){
+        if(!shooterRunning){
+          
+        }
 				shooterRunning = true;
         targetingCompleted = false;
 				//start spinning the intake
@@ -270,13 +281,17 @@ public class Robot extends TimedRobot {
 				homingStage = 0;
 			}
 		}
-	
+  
+//Runs shooter and intake
   public void runShooter() {
-    
-    m_robotDrive.driveCartesian(0, 0, 0);
+
+		if(!hasBall){
+			m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+		}
 
     if (limitSwitch.get() && !hasBall) {
       hasBall = true;
+      m_robotDrive.driveCartesian(0, 0, 0);
       //start timer
       switchIntakeTimer.reset();
       switchIntakeTimer.start();
@@ -286,25 +301,49 @@ public class Robot extends TimedRobot {
         if(switchIntakeTimer.get() <= 0.5){
           //stop the motor 0.5 secs after running intake
           m_intakeL.set(0.0);
-        }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 1.0){
+        }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 0.75){
           //shoot ball out for half a sec
           m_intakeL.set(-0.5);
           m_shooterM.set(-0.5);
-        }else if(switchIntakeTimer.get() > 1.0 && switchIntakeTimer.get() <= 2.0){
+          motorStartup = true;
+        }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
+          //stop intake motors
+          m_intakeL.set(-0.0);
           //Startup motors for shooter
           m_shooterM.set(shootSpeed);
           m_shooterT.set(shootSpeed);
-        }else if (!targetingCompleted && switchIntakeTimer.get() >= 2.0){
-					//target the hub
-					runTargeting(); 
-        }else {
+					secondaryMovement = true;
+          motorStartup = false;
+				}else if(secondaryMovement ){
+					//allow movement
+          m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+					if(stick.getRawButtonPressed(2)){
+						secondaryMovement = false;
+						runIntake = true;
+            runTargeting = true;
+					}
+				}else if ( runTargeting && runIntake) {
+          shooterClock.reset();
+          shooterClock.start();
+          
+          m_robotDrive.driveCartesian(0, 0, 0);
+					//runTargeting(); 
+          m_intakeL.set(1);
+          runIntake = false;
+        }else if(runTargeting && !runIntake && shooterClock.get() >= 2){
           //stop everything
           switchIntakeTimer.stop();
           hasBall = false;
+          targetingCompleted = false;
+          shooterRunning = false;
+          secondaryMovement = false;
+          runTargeting = false;
+          runIntake = false;
+          sonicAlign = false;
+
           m_shooterM.set(0);
           m_shooterT.set(0);
           m_intakeL.set(0.0);
-          return;
         }
       }
     }
@@ -337,6 +376,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
+    SmartDashboard.putBoolean("switch onicAlign",sonicAlign);
 	}
 
 	
