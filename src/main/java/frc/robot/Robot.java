@@ -95,6 +95,11 @@ public class Robot extends TimedRobot {
   private boolean runIntake = false;
 
   private boolean motorStartup =false;
+<<<<<<< HEAD
+=======
+
+  private boolean sonicAlign = false;
+>>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
 
 
 	public NetworkTable table;
@@ -178,6 +183,7 @@ public class Robot extends TimedRobot {
     m_intakeL.set(0);
     m_shooterM.set(0);
     m_shooterT.set(0);
+    sonicAlign = false;
   }
 
   public void disabledPeriodic(){
@@ -313,6 +319,7 @@ public class Robot extends TimedRobot {
           motorStartup = false;
 				}else if(secondaryMovement ){
 					//allow movement
+<<<<<<< HEAD
 					System.out.println("Test");
           System.out.println(stick.getRawButton(2));
           m_robotDrive.driveCartesian(stickY,stickX,stickZ);
@@ -323,6 +330,15 @@ public class Robot extends TimedRobot {
             runIntake = true;
 					}
 				} else if ( runTargeting && runIntake) {
+=======
+          m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+					if(stick.getRawButtonPressed(2)){
+						secondaryMovement = false;
+						runIntake = true;
+            runTargeting = true;
+					}
+				}else if ( runTargeting && runIntake) {
+>>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
           shooterClock.reset();
           shooterClock.start();
           
@@ -339,6 +355,10 @@ public class Robot extends TimedRobot {
           secondaryMovement = false;
           runTargeting = false;
           runIntake = false;
+<<<<<<< HEAD
+=======
+          sonicAlign = false;
+>>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
 
           m_shooterM.set(0);
           m_shooterT.set(0);
@@ -375,6 +395,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
+    SmartDashboard.putBoolean("switch onicAlign",sonicAlign);
 	}
 
 	
