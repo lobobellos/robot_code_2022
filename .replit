@@ -1,0 +1,2 @@
+language = "bash"
+run = "gradlew deploy --pteamnumber 7243 --offline"

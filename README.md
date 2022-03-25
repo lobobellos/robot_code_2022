@@ -13,15 +13,37 @@ Joystick z-axis: rotate around z-axis<br>
 <br>
 Joystick thumb button: allows z-axis rotation when pressed<br>
 Joystick side button: toggle safe mode <br>
+Joystick side button: toggle intake motors<br>
 Joystick trigger: start launch sequence <br>
 
+Joystick-4 : use in pits -reload
+Joysting-5 : use in game - deploy
 
-# Motor Ports
+joystick button 2 - toggle shooter
+
+
+# PWM Ports
 | motor | port |
 | --- | ----------- |
 | Gearbox- RearRight | 0 |
 | Gearbox- FrontRight | 1 |
 | Gearbox- Rearleft | 2 |
 | Gearbox- Rearleft | 3 |
-| intake- Left | 4 |
-| intake- Right | 5 |
+| Intake- Left | 4 |
+| launcher- main | 5 |
+| launcher- top | 6 |
+| Arm- main | 8 |
+
+
+
+# DIO ports
+
+| item | port |
+| --- | ----------- |
+| ultrasonic- Output | 0 |
+| ultrasonic- Input | 1 |
+| limit switch- Input | 2 |
+
+
+
+
