@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
 
   //var used for toggling intake
   private static boolean intakeRunning = false;
-  private double shootSpeed = 0.7;
+  private double shootSpeed = 7;
 
   //var used for toggling targeting
   private static boolean targetingRunning = false;
@@ -95,11 +95,10 @@ public class Robot extends TimedRobot {
   private boolean runIntake = false;
 
   private boolean motorStartup =false;
-<<<<<<< HEAD
-=======
 
   private boolean sonicAlign = false;
->>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
+
+  private Timer autoTimer;
 
 
 	public NetworkTable table;
@@ -164,16 +163,27 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousPeriodic() {
-      if (spinCompleted) {
-        //runTargeting();
-    }
+
   }
 
   @Override
   public void autonomousInit() {
-    //Spins bot at initialization phase;
-    spin();
-    spinCompleted = true;
+    m_robotDrive.driveCartesian(-1, 0, 0);
+    Timer.delay(1.5);
+
+
+    m_shooterM.setVoltage(shootSpeed);
+    m_shooterT.setVoltage(shootSpeed);
+    Timer.delay(3);
+    m_intakeL.set(1);
+    Timer.delay(2);
+    m_shooterM.setVoltage(0);
+    m_shooterT.setVoltage(0);
+    m_intakeL.setVoltage(0);
+
+    //start taxi
+    m_robotDrive.driveCartesian(-0.75, 0, 0);
+    Timer.delay(1.5);
   }
 
   public void disabledInit(){
@@ -205,11 +215,10 @@ public class Robot extends TimedRobot {
     //get inputs from joystick and use them
     applyDeadzone();
 
-    if(!shooterRunning){
-      
+    //turns on climb if button pressed
+    toggleClimb();
 
-      //turns on climb if button pressed
-      toggleClimb();
+    if(!shooterRunning){
 
 
       // Use the joystick X axis for lateral movement, Y axis for forward
@@ -307,30 +316,18 @@ public class Robot extends TimedRobot {
         }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 0.75){
           //shoot ball out for half a sec
           m_intakeL.set(-0.5);
-          m_shooterM.set(-0.5);
+          m_shooterM.setVoltage(-6);
           motorStartup = true;
         }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
           //stop intake motors
-          m_intakeL.set(-0.0);
+          m_intakeL.setVoltage(-0.0);
           //Startup motors for shooter
-          m_shooterM.set(shootSpeed);
-          m_shooterT.set(shootSpeed);
+          m_shooterM.setVoltage(shootSpeed);
+          m_shooterT.setVoltage(shootSpeed);
 					secondaryMovement = true;
           motorStartup = false;
 				}else if(secondaryMovement ){
 					//allow movement
-<<<<<<< HEAD
-					System.out.println("Test");
-          System.out.println(stick.getRawButton(2));
-          m_robotDrive.driveCartesian(stickY,stickX,stickZ);
-					if(stick.getRawButtonPressed(2)){
-            System.out.println("Ran correctly");
-						secondaryMovement = false;
-						runTargeting = true;
-            runIntake = true;
-					}
-				} else if ( runTargeting && runIntake) {
-=======
           m_robotDrive.driveCartesian(stickY,stickX,stickZ);
 					if(stick.getRawButtonPressed(2)){
 						secondaryMovement = false;
@@ -338,7 +335,6 @@ public class Robot extends TimedRobot {
             runTargeting = true;
 					}
 				}else if ( runTargeting && runIntake) {
->>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
           shooterClock.reset();
           shooterClock.start();
           
@@ -355,10 +351,7 @@ public class Robot extends TimedRobot {
           secondaryMovement = false;
           runTargeting = false;
           runIntake = false;
-<<<<<<< HEAD
-=======
           sonicAlign = false;
->>>>>>> 6262a2fa4b5aa95bae21a614c987aa0db357b73b
 
           m_shooterM.set(0);
           m_shooterT.set(0);
