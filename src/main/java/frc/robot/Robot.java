@@ -319,6 +319,8 @@ public class Robot extends TimedRobot {
           m_shooterM.setVoltage(-6);
           motorStartup = true;
         }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
+					//allow driving while motors are getting up to speed
+					m_robotDrive.driveCartesian(stickX, stickY, stickZ);
           //stop intake motors
           m_intakeL.setVoltage(-0.0);
           //Startup motors for shooter
@@ -338,7 +340,6 @@ public class Robot extends TimedRobot {
           shooterClock.reset();
           shooterClock.start();
           
-          m_robotDrive.driveCartesian(0, 0, 0);
 					//runTargeting(); 
           m_intakeL.set(1);
           runIntake = false;
