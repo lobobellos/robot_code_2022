@@ -37,8 +37,6 @@ public class Robot extends TimedRobot {
   private static final int topShooterChannel = 6;
   private static final int climberChannel = 7;
 
-
-
   //DIO channels
   private static final int ultrasonicOutputChannel = 0;
   private static final int ultrasonicInputChannel = 1;
@@ -95,9 +93,6 @@ public class Robot extends TimedRobot {
   private boolean runIntake = false;
   private boolean sonicAlign = false;
 
-
-
-
 	public NetworkTable table;
 	public NetworkTableEntry tx;
 	public NetworkTableEntry ty;
@@ -109,9 +104,14 @@ public class Robot extends TimedRobot {
   private boolean retractArms = true;
   private boolean climbRunning = false;
 
+  //Allignment mechanism
+  private boolean toggleAllign = false;
+  private boolean distanceStage = false;
+  private boolean allignStage = false;
+
   @Override
   public void robotInit() {
-    
+
     //declare motor controllers
     Spark frontLeft = new Spark(kFrontLeftChannel);
     Spark rearLeft = new Spark(kRearLeftChannel);
@@ -167,8 +167,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotDrive.driveCartesian(-1, 0, 0);
     Timer.delay(1.5);
-
-
     m_shooterM.setVoltage(shootSpeed);
     m_shooterT.setVoltage(shootSpeed);
     Timer.delay(3);
@@ -215,9 +213,9 @@ public class Robot extends TimedRobot {
     //turns on climb if button pressed
     toggleClimb();
 
+    resetShooter();
+
     if(!shooterRunning){
-
-
       // Use the joystick X axis for lateral movement, Y axis for forward
       // movement, and Z axis for rotation.
       m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
@@ -277,19 +275,19 @@ public class Robot extends TimedRobot {
     }
 	} 
 	
-		public void toggleShooter(){
-			if(stick.getRawButtonPressed(1) && !shooterRunning){
-        if(!shooterRunning){
-          
-        }
-				shooterRunning = true;
+  public void toggleShooter(){
+    if(stick.getRawButtonPressed(1) && !shooterRunning){
+      if(!shooterRunning){
+        
+      }
+      shooterRunning = true;
 
-				//start spinning the intake
-				m_intakeL.set(0.5);
+      //start spinning the intake
+      m_intakeL.setVoltage(8);
 
-				homingStage = 0;
-			}
-		}
+      homingStage = 0;
+    }
+  }
   
 //Runs shooter and intake
   public void runShooter() {
@@ -323,7 +321,7 @@ public class Robot extends TimedRobot {
           m_shooterM.setVoltage(shootSpeed);
           m_shooterT.setVoltage(shootSpeed);
 					secondaryMovement = true;
-				}else if(secondaryMovement ){
+				}else if(secondaryMovement){
 					//allow movement
           m_robotDrive.driveCartesian(stickY,stickX,stickZ);
 					if(stick.getRawButtonPressed(2)){
@@ -331,10 +329,9 @@ public class Robot extends TimedRobot {
 						runIntake = true;
             runTargeting = true;
 					}
-				}else if ( runTargeting && runIntake) {
+				}else if(runTargeting && runIntake) {
           shooterClock.reset();
           shooterClock.start();
-          
 					//runTargeting(); 
           m_intakeL.set(1);
           runIntake = false;
@@ -355,6 +352,23 @@ public class Robot extends TimedRobot {
         }
       }
     }
+
+  public void resetShooter() {
+    if(stick.getRawButtonPressed(11)) {
+      switchIntakeTimer.stop();
+      hasBall = false;
+
+      shooterRunning = false;
+      secondaryMovement = false;
+      runTargeting = false;
+      runIntake = false;
+      sonicAlign = false;
+
+      m_shooterM.set(0);
+      m_shooterT.set(0);
+      m_intakeL.set(0.0);
+    }
+  }
 
 
   public void toggleTargeting(){
@@ -388,61 +402,68 @@ public class Robot extends TimedRobot {
 	}
 
 	
-  public void runTargeting(){
-    if(homingStage == 0){
-      //spin until facing hub
-			if(tx.getDouble(0.0) > 1){
-        if(tx.getDouble(0.0) < 10){
+  public void allignRobot() {
+    //If button 12 hasn't been pressed, allow for user control
+    if (!toggleAllign) {
+      m_robotDrive.driveCartesian(stickX, stickY, stickZ);
+    }
+
+    //If button is pressed, toggle is set to true, allowing for aiming at hoop
+    if (stick.getRawButtonPressed(12)) {
+      toggleAllign = true;
+    }
+
+    //Aim at hoop
+    if (!allignStage && toggleAllign) {
+      if (tx.getDouble(0.0) > 1) {
+        if (tx.getDouble(0.0) < 10) {
           m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
-        }else{
+        } else {
           m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
         }
-			}else if(tx.getDouble(0.0) <= -1){
+      } else if(tx.getDouble(0.0) <= -1){
 				if(tx.getDouble(0.0) > -10){
           m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
         }else{
-          m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
+          m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);  
         }
-			}else{
-				homingStage = 1;
-			}
-    }else if(homingStage == 1){
-      //only run if the intake is down
-      if(uSonic.getRangeInches() >= 5 ){
-        //if needed, move to correct distance from robot
-        if(uSonic.getRangeInches() >= 60){
-          m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
-        }else if(uSonic.getRangeInches() <= 50){
-          m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
-        }else{
-					shooterClock.reset();
-          shooterClock.start();
-          homingStage = 2;
-        }
-
-      }else{
-        //if unsafe, turn off homing sequence
-        targetingRunning = false;
-      }
-
-    }else if(homingStage == 2){
-			//pull the ball in and launch!
-      m_intakeL.set(1);
-			if(shooterClock.get() >= 4){
-				m_intakeL.set(1);
-			}
-		}
+			} else {
+				allignStage = true;
+    }
   }
+
+  //Gauge  and fix distance from hoop
+  if (allignStage && !distanceStage && toggleAllign) {
+    if (uSonic.getRangeInches() >= 5 ) {
+      if (uSonic.getRangeInches() >= 60) {
+        m_robotDrive.driveCartesian(0.75, 0.0, 0.0, 0.0);
+      }else if (uSonic.getRangeInches() <= 50) {
+        m_robotDrive.driveCartesian(-0.75, 0.0, 0.0, 0.0);
+      }else{
+        shooterClock.reset();
+        shooterClock.start();
+        homingStage = 2;
+      }
+    } else {
+      distanceStage = true;
+    }
+  }
+
+  //Set everything to false once everything is alligned.
+  if (allignStage && distanceStage) {
+    toggleAllign = false;
+    allignStage = false;
+    distanceStage = false;
+  }
+}
 
 //Bot goes up on button 4, continue holding to make it go down. Press 5 to retract arms (manual intervention needed, pull rachet )
   public void toggleClimb() {
     //If climbButton and stick is pressed
     if(stick.getRawButton(4)){
       m_climb.set(0.5);
-
     }else if(stick.getRawButton(5)){
       m_climb.set(-0.5);
-
     }else{
       m_climb.set(0);
     }
@@ -457,7 +478,7 @@ public class Robot extends TimedRobot {
     while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0.0, 0.0, 1.0, 0.0);
     }
-    
+
      while (time.get() <= spinTime / 2) {
       m_robotDrive.driveCartesian(0.0, 0.0, -1.0, 0.0);
     }

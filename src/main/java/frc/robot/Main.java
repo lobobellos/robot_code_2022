@@ -13,10 +13,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  */
 public final class Main {
   private Main() {}
-
-
   //Main initialization function. Do not perform any initialization here.
-
   public static void main(String... args) {
     RobotBase.startRobot(Robot::new);
   }
