@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
   private static double gyroAngle = 0;
   private static double throttle;
   private static final double spinTime = 5;
-  private static boolean spinCompleted = false;
+
 
   private static final int stickChannel = 0;
   private static final boolean useGyro = true;
@@ -84,21 +84,18 @@ public class Robot extends TimedRobot {
   private Spark m_shooterM;
   private Spark m_shooterT;
 
-
+  //timers used for launching 
   private Timer shooterClock;
-
   private Timer switchIntakeTimer;
+
+  //bools used for targeting and launching
   private boolean hasBall = false;
-  private boolean targetingCompleted = false;
   private boolean secondaryMovement = false;
   private boolean runTargeting = false;
   private boolean runIntake = false;
-
-  private boolean motorStartup =false;
-
   private boolean sonicAlign = false;
 
-  private Timer autoTimer;
+
 
 
 	public NetworkTable table;
@@ -286,7 +283,7 @@ public class Robot extends TimedRobot {
           
         }
 				shooterRunning = true;
-        targetingCompleted = false;
+
 				//start spinning the intake
 				m_intakeL.set(0.5);
 
@@ -317,15 +314,15 @@ public class Robot extends TimedRobot {
           //shoot ball out for half a sec
           m_intakeL.set(-0.5);
           m_shooterM.setVoltage(-6);
-          motorStartup = true;
         }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
+					//allow driving while motors are getting up to speed
+					m_robotDrive.driveCartesian(stickX, stickY, stickZ);
           //stop intake motors
           m_intakeL.setVoltage(-0.0);
           //Startup motors for shooter
           m_shooterM.setVoltage(shootSpeed);
           m_shooterT.setVoltage(shootSpeed);
 					secondaryMovement = true;
-          motorStartup = false;
 				}else if(secondaryMovement ){
 					//allow movement
           m_robotDrive.driveCartesian(stickY,stickX,stickZ);
@@ -338,7 +335,6 @@ public class Robot extends TimedRobot {
           shooterClock.reset();
           shooterClock.start();
           
-          m_robotDrive.driveCartesian(0, 0, 0);
 					//runTargeting(); 
           m_intakeL.set(1);
           runIntake = false;
@@ -346,7 +342,7 @@ public class Robot extends TimedRobot {
           //stop everything
           switchIntakeTimer.stop();
           hasBall = false;
-          targetingCompleted = false;
+
           shooterRunning = false;
           secondaryMovement = false;
           runTargeting = false;
@@ -434,7 +430,6 @@ public class Robot extends TimedRobot {
       m_intakeL.set(1);
 			if(shooterClock.get() >= 4){
 				m_intakeL.set(1);
-				targetingCompleted = true;
 			}
 		}
   }
