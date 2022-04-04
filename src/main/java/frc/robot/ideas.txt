@@ -1,5 +1,3 @@
-
-
 1) turn on intake
 
 allow movement
@@ -17,3 +15,6 @@ keep running to allow the ball to go through
 
 turn everything off
 
+Changes 4/4/2022
+1. Fix alignment with limelight
+2. Add "reset" button (button 11);
