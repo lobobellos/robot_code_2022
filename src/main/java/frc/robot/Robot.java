@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
     m_shooterM.setVoltage(shootSpeed);
     m_shooterT.setVoltage(shootSpeed);
     Timer.delay(3);
-    m_intakeL.set(1);
+    m_intakeL.setVoltage(12);
     Timer.delay(2);
     m_shooterM.setVoltage(0);
     m_shooterT.setVoltage(0);
@@ -182,9 +182,9 @@ public class Robot extends TimedRobot {
     //turns off shooter when disabled
     targetingRunning =false;
     safeMode = false;
-    m_intakeL.set(0);
-    m_shooterM.set(0);
-    m_shooterT.set(0);
+    m_intakeL.setVoltage(0);
+    m_shooterM.setVoltage(0);
+    m_shooterT.setVoltage(0);
     sonicAlign = false;
   }
 
@@ -300,10 +300,10 @@ public class Robot extends TimedRobot {
     if (hasBall) {
         if(switchIntakeTimer.get() <= 0.5){
           //stop the motor 0.5 secs after running intake
-          m_intakeL.set(0.0);
+          m_intakeL.setVoltage(0.0);
         }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 0.75){
           //shoot ball out for half a sec
-          m_intakeL.set(-0.5);
+          m_intakeL.setVoltage(-6);
           m_shooterM.setVoltage(-6);
         }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
 					//allow driving while motors are getting up to speed
@@ -326,7 +326,7 @@ public class Robot extends TimedRobot {
           shooterClock.reset();
           shooterClock.start();
 					//runTargeting(); 
-          m_intakeL.set(1);
+          m_intakeL.setVoltage(12);
           runIntake = false;
         }else if(runTargeting && !runIntake && shooterClock.get() >= 2){
           //stop everything
@@ -339,9 +339,9 @@ public class Robot extends TimedRobot {
           runIntake = false;
           sonicAlign = false;
 
-          m_shooterM.set(0);
-          m_shooterT.set(0);
-          m_intakeL.set(0.0);
+          m_shooterM.setVoltage(0);
+          m_shooterT.setVoltage(0);
+          m_intakeL.setVoltage(0.0);
         }
       }
     }
