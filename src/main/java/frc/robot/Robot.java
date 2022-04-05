@@ -62,7 +62,6 @@ public class Robot extends TimedRobot {
 
   //var used for toggling targeting
   private static boolean targetingRunning = false;
-  private int homingStage = 1;
 
   //vars used for targeting shooter
   private static boolean shooterRunning = false;
@@ -100,8 +99,6 @@ public class Robot extends TimedRobot {
 
   //Climbing mechanism
   private Spark m_climb;
-  private boolean extendArms = false;
-  private boolean retractArms = true;
   private boolean climbRunning = false;
 
   //Allignment mechanism
@@ -284,8 +281,6 @@ public class Robot extends TimedRobot {
 
       //start spinning the intake
       m_intakeL.setVoltage(8);
-
-      homingStage = 0;
     }
   }
   
@@ -376,7 +371,6 @@ public class Robot extends TimedRobot {
     if(stick.getRawButtonPressed(1)){
       if(!targetingRunning){
         targetingRunning = true;
-        homingStage = 0;
       }
     }
   }
@@ -392,10 +386,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("safeMode",safeMode);
     SmartDashboard.putBoolean("intake running", intakeRunning);
     SmartDashboard.putNumber("ultrasonic", uSonic.getRangeInches());
-    SmartDashboard.putBoolean("Retracts Arms: ", retractArms);
-    SmartDashboard.putBoolean("Extend Arms: ", extendArms);
-    SmartDashboard.putNumber("shooter timer",shooterClock.get());
-    SmartDashboard.putNumber("shooter phase",homingStage);
     SmartDashboard.putBoolean("climb running",climbRunning);
     SmartDashboard.putBoolean("switch pressed",limitSwitch.get());
     SmartDashboard.putBoolean("switch onicAlign",sonicAlign);
@@ -442,7 +432,6 @@ public class Robot extends TimedRobot {
       }else{
         shooterClock.reset();
         shooterClock.start();
-        homingStage = 2;
       }
     } else {
       distanceStage = true;
