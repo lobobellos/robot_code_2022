@@ -402,7 +402,7 @@ public class Robot extends TimedRobot {
 	}
 
 	
-  public void allignRobot() {
+  public void alignRobot() {
     //If button 12 hasn't been pressed, allow for user control
     if (!toggleAllign) {
       m_robotDrive.driveCartesian(stickX, stickY, stickZ);
@@ -457,17 +457,19 @@ public class Robot extends TimedRobot {
   }
 }
 
-//Bot goes up on button 4, continue holding to make it go down. Press 5 to retract arms (manual intervention needed, pull rachet )
-  public void toggleClimb() {
-    //If climbButton and stick is pressed
-    if(stick.getRawButton(4)){
-      m_climb.set(0.5);
-    }else if(stick.getRawButton(5)){
-      m_climb.set(-0.5);
-    }else{
-      m_climb.set(0);
-    }
-  }
+
+	//use button 4 in pits to load spring
+	//use button 5 to deploy during match
+	public void toggleClimb() {
+		//If climbButton and stick is pressed
+		if(stick.getRawButton(4)){
+			m_climb.set(0.5);
+		}else if(stick.getRawButton(5)){
+			m_climb.set(-0.5);
+		}else{
+			m_climb.set(0);
+		}
+	}
 
   
   //Makes the robot spin for a specified amount of time
