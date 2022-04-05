@@ -274,11 +274,9 @@ public class Robot extends TimedRobot {
 	
   public void toggleShooter(){
     if(stick.getRawButtonPressed(1) && !shooterRunning){
-      if(!shooterRunning){
-        
-      }
+      //set shooterRunning to true
       shooterRunning = true;
-
+      
       //start spinning the intake
       m_intakeL.setVoltage(8);
     }
