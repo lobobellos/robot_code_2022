@@ -58,13 +58,14 @@ public class Robot extends TimedRobot {
 
   //var used for toggling intake
   private static boolean intakeRunning = false;
-  private double shootSpeed = 7;
+  private double shootSpeed = 6;
 
   //var used for toggling targeting
   private static boolean targetingRunning = false;
 
   //vars used for targeting shooter
   private static boolean shooterRunning = false;
+  private boolean limeLightAlign= false;
 
   
   private static final double deadZoneX = 0.1;
@@ -283,68 +284,95 @@ public class Robot extends TimedRobot {
   }
   
 //Runs shooter and intake
-  public void runShooter() {
+public void runShooter() {
 
-		if(!hasBall){
-			m_robotDrive.driveCartesian(stickY,stickX,stickZ);
-		}
+  if(!hasBall){
+    m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+  }
 
-    if (limitSwitch.get() && !hasBall) {
-      hasBall = true;
-      m_robotDrive.driveCartesian(0, 0, 0);
-      //start timer
-      switchIntakeTimer.reset();
-      switchIntakeTimer.start();
-    } 
-		// if has ball, loop runs continuously in periodic.
-    if (hasBall) {
-        if(switchIntakeTimer.get() <= 0.5){
-          //stop the motor 0.5 secs after running intake
-          m_intakeL.setVoltage(0.0);
-        }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 0.75){
-          //shoot ball out for half a sec
-          m_intakeL.setVoltage(-6);
-          m_shooterM.setVoltage(-6);
-        }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
-					//allow driving while motors are getting up to speed
-					m_robotDrive.driveCartesian(stickX, stickY, stickZ);
-          //stop intake motors
-          m_intakeL.setVoltage(-0.0);
-          //Startup motors for shooter
-          m_shooterM.setVoltage(shootSpeed);
-          m_shooterT.setVoltage(shootSpeed);
-					secondaryMovement = true;
-				}else if(secondaryMovement){
-					//allow movement
-          m_robotDrive.driveCartesian(stickY,stickX,stickZ);
-					if(stick.getRawButtonPressed(2)){
-						secondaryMovement = false;
-						runIntake = true;
-            runTargeting = true;
-					}
-				}else if(runTargeting && runIntake) {
+  if (limitSwitch.get() && !hasBall) {
+    hasBall = true;
+    m_robotDrive.driveCartesian(0, 0, 0);
+    //start timer
+    switchIntakeTimer.reset();
+    switchIntakeTimer.start();
+  } 
+  // if has ball, loop runs continuously in periodic.
+  if (hasBall) {
+      if(switchIntakeTimer.get() <= 0.5){
+        //stop the motor 0.5 secs after running intake
+        m_intakeL.set(0.0);
+      }else if(switchIntakeTimer.get() > 0.5 && switchIntakeTimer.get() <= 0.75){
+        //shoot ball out for half a sec
+        m_intakeL.set(-0.5);
+        m_shooterM.setVoltage(-6);
+      }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
+        //allow driving while motors are getting up to speed
+        m_robotDrive.driveCartesian(stickX, stickY, stickZ);
+        //stop intake motors
+        m_intakeL.setVoltage(-0.0);
+        //Startup motors for shooter
+        m_shooterM.setVoltage(shootSpeed);
+        m_shooterT.setVoltage(shootSpeed);
+        secondaryMovement = true;
+      }else if(secondaryMovement){
+        //allow movement
+        m_robotDrive.driveCartesian(stickY,stickX,stickZ);
+        if(stick.getRawButtonPressed(2)){
+          secondaryMovement = false;
+          runIntake = true;
+          runTargeting = true;
+          limeLightAlign = true;
+        }
+      }else if(runTargeting && runIntake) {
+        //allow skiping of alignment with button 3
+        if(stick.getRawButtonPressed(3)){
+          limeLightAlign = false;
+        }
+        if(limeLightAlign){
+          //align using limelight
+          if(tx.getDouble(0.0) > 1){
+            if(tx.getDouble(0.0) < 10){
+              m_robotDrive.driveCartesian(0.0, 0.0, 0.25, 0.0);
+            }else{
+              m_robotDrive.driveCartesian(0.0, 0.0, 0.5, 0.0);
+            }
+          }else if(tx.getDouble(0.0) <= -1){
+            if(tx.getDouble(0.0) > -10){
+              m_robotDrive.driveCartesian(0.0, 0.0, -0.25, 0.0);
+            }else{
+              m_robotDrive.driveCartesian(0.0, 0.0, -0.5, 0.0);
+            }
+          }else{
+            limeLightAlign = false;
+          }
+        }else{
+          //pull the intake
           shooterClock.reset();
           shooterClock.start();
-					//runTargeting(); 
-          m_intakeL.setVoltage(12);
+          //runTargeting(); 
+          m_intakeL.set(1);
           runIntake = false;
-        }else if(runTargeting && !runIntake && shooterClock.get() >= 2){
-          //stop everything
-          switchIntakeTimer.stop();
-          hasBall = false;
-
-          shooterRunning = false;
-          secondaryMovement = false;
-          runTargeting = false;
-          runIntake = false;
-          sonicAlign = false;
-
-          m_shooterM.setVoltage(0);
-          m_shooterT.setVoltage(0);
-          m_intakeL.setVoltage(0.0);
         }
+        
+      }else if(runTargeting && !runIntake && shooterClock.get() >= 2){
+        //stop everything
+        switchIntakeTimer.stop();
+        hasBall = false;
+
+        shooterRunning = false;
+        secondaryMovement = false;
+        runTargeting = false;
+        runIntake = false;
+        sonicAlign = false;
+        limeLightAlign= false;
+
+        m_shooterM.set(0);
+        m_shooterT.set(0);
+        m_intakeL.set(0.0);
       }
     }
+  }
 
   public void resetShooter() {
     if(stick.getRawButtonPressed(11)) {
