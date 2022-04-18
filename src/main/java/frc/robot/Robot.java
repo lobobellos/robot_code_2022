@@ -50,6 +50,7 @@ public class Robot extends TimedRobot {
 
 
   private static final int stickChannel = 0;
+  private static final int eStopChannel = 1;
   private static final boolean useGyro = true;
 
   //vars used for toggling safemode
@@ -74,6 +75,7 @@ public class Robot extends TimedRobot {
 
   private MecanumDrive m_robotDrive;
   private Joystick stick;
+  private Joystick eStop;
   private ADXRS450_Gyro gyro;
   public Ultrasonic uSonic;
   public DigitalInput limitSwitch;
@@ -81,6 +83,9 @@ public class Robot extends TimedRobot {
   private Spark m_intakeL;
   private Spark m_shooterM;
   private Spark m_shooterT;
+
+  //estopped
+  private boolean eStopped;
 
   //timers used for launching 
   private Timer shooterClock;
@@ -93,6 +98,7 @@ public class Robot extends TimedRobot {
   private boolean runIntake = false;
   private boolean sonicAlign = false;
 
+  //limelight outputs
 	public NetworkTable table;
 	public NetworkTableEntry tx;
 	public NetworkTableEntry ty;
@@ -109,6 +115,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
+    //set Estopped to false on startup
+    eStopped = false;
 
     //declare motor controllers
     Spark frontLeft = new Spark(kFrontLeftChannel);
@@ -130,6 +139,7 @@ public class Robot extends TimedRobot {
 
 		//declare stick, gyro, and ultrasonic
     stick = new Joystick(stickChannel);
+    eStop = new Joystick(eStopChannel);
     gyro = new ADXRS450_Gyro();
 		uSonic = new Ultrasonic(ultrasonicOutputChannel, ultrasonicInputChannel);
     limitSwitch =  new DigitalInput(2);
@@ -195,6 +205,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    //check the E-stop
+    if(eStop.getRawButton(0)){
+      eStopped = true;
+    }
 
 		// display limelight x and y values
 		updateDashboard();
