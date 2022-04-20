@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
     if(!eStopped){
 
       //check the E-stop
-      if(eStop.getRawButton(0)){
+      if(eStop.getRawButton(1)){
         eStopped = true;
       }
 
@@ -245,6 +245,12 @@ public class Robot extends TimedRobot {
         runShooter();
       }
 
+    }else{
+      m_robotDrive.driveCartesian(0, 0, 0, 0);
+      m_climb.setVoltage(0);
+      m_intakeL.setVoltage(0);
+      m_shooterM.setVoltage(0);
+      m_shooterT.setVoltage(0);
     }
   }
 
