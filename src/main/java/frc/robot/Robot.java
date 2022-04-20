@@ -213,34 +213,38 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //check the E-stop
-    if(eStop.getRawButton(0)){
-      eStopped = true;
-    }
+    if(!eStopped){
 
-		// display limelight x and y values
-		updateDashboard();
+      //check the E-stop
+      if(eStop.getRawButton(0)){
+        eStopped = true;
+      }
 
-    //toggle shooter
-    toggleShooter();
+      // display limelight x and y values
+      updateDashboard();
 
-    //applies safe mode if nessecary
-    applySafeMode();
+      //toggle shooter
+      toggleShooter();
 
-    //get inputs from joystick and use them
-    applyDeadzone();
+      //applies safe mode if nessecary
+      applySafeMode();
 
-    //turns on climb if button pressed
-    toggleClimb();
+      //get inputs from joystick and use them
+      applyDeadzone();
 
-    resetShooter();
+      //turns on climb if button pressed
+      toggleClimb();
 
-    if(!shooterRunning){
-      // Use the joystick X axis for lateral movement, Y axis for forward
-      // movement, and Z axis for rotation.
-      m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
-    } else{
-      runShooter();
+      resetShooter();
+
+      if(!shooterRunning){
+        // Use the joystick X axis for lateral movement, Y axis for forward
+        // movement, and Z axis for rotation.
+        m_robotDrive.driveCartesian(stickY, stickX, stickZ, gyroAngle);
+      } else{
+        runShooter();
+      }
+
     }
   }
 
