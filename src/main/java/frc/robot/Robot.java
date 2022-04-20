@@ -164,10 +164,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotDrive.driveCartesian(-1, 0, 0);
-    Timer.delay(1.5);
-    m_shooterM.setVoltage(shootSpeed);
-    m_shooterT.setVoltage(shootSpeed);
-    Timer.delay(3);
+    Timer.delay(1.0);
+    //drive back
+    m_robotDrive.driveCartesian(1, 0, 0);
+    Timer.delay(1.0);
+    m_robotDrive.driveCartesian(0, 0, 0);
+    m_shooterM.setVoltage(shootSpeed+1);
+    m_shooterT.setVoltage(shootSpeed+1);
+    Timer.delay(4);
     m_intakeL.setVoltage(12);
     Timer.delay(2);
     m_shooterM.setVoltage(0);
@@ -175,8 +179,11 @@ public class Robot extends TimedRobot {
     m_intakeL.setVoltage(0);
 
     //start taxi
-    m_robotDrive.driveCartesian(-0.75, 0, 0);
-    Timer.delay(1.5);
+    m_robotDrive.driveCartesian(-1, 0, 0);
+    Timer.delay(0.5);
+    m_robotDrive.driveCartesian(-1, 0, 0);
+    Timer.delay(0.5);
+    m_robotDrive.driveCartesian(0, 0, 0);
   }
 
   public void disabledInit(){
@@ -308,7 +315,7 @@ public void runShooter() {
         m_shooterM.setVoltage(-6);
       }else if(switchIntakeTimer.get() > 0.75 && switchIntakeTimer.get() <= 2.0){
         //allow driving while motors are getting up to speed
-        m_robotDrive.driveCartesian(stickX, stickY, stickZ);
+        m_robotDrive.driveCartesian(stickY, stickX, stickZ);
         //stop intake motors
         m_intakeL.setVoltage(-0.0);
         //Startup motors for shooter
