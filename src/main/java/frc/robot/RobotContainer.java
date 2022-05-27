@@ -5,10 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.DefaultDrive;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -18,12 +22,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveBase m_exampleSubsystem = new DriveBase();
+  private final DriveBase driveBase = new DriveBase();
+  private final Climber climber = new Climber();
 
-  private final DefaultDrive m_autoCommand = new DefaultDrive(m_exampleSubsystem);
+  private final RaiseHook raiseHook = new RaiseHook(climber);
+
+  public Joystick stick = new Joystick(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    driveBase.setDefaultCommand(new RunCommand(()->
+    driveBase.driveCartesian(stick.getY(), stick.getX(), stick.getZ(), ((-stick.getThrottle())+1.7)/2.7)
+    ,driveBase));
+    
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -34,7 +47,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    new JoystickButton(stick, 4).whenPressed(raiseHook);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -43,6 +58,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return new InstantCommand(()->System.out.println("auto command"));
   }
 }
