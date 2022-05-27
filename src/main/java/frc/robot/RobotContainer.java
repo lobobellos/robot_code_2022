@@ -26,6 +26,8 @@ public class RobotContainer {
   private final Climber climber = new Climber();
 
   private final RaiseHook raiseHook = new RaiseHook(climber);
+  private final LowerHook lowerHook = new LowerHook(climber);
+  private final StopHook stopHook = new StopHook(climber);
 
   public Joystick stick = new Joystick(0);
 
@@ -48,7 +50,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(stick, 4).whenPressed(raiseHook);
+    new JoystickButton(stick, 4).whenHeld(raiseHook);
+    new JoystickButton(stick, 5).whenHeld(lowerHook);
+    new JoystickButton(stick, 4).whenReleased(stopHook);
+    new JoystickButton(stick, 5).whenReleased(stopHook);
   }
 
   /**
