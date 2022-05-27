@@ -4,19 +4,19 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+
+public class DriveBase extends SubsystemBase {
+
+  private static Spark m_fl = new Spark(2);
+  private static Spark m_fr = new Spark(2);
+  private static Spark m_rl = new Spark(3);
+  private static Spark m_rr = new Spark(2);
+
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  public DriveBase() {}
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
 }
