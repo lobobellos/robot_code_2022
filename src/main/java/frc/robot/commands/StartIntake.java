@@ -6,12 +6,27 @@ import frc.robot.subsystems.LimitSwitch;
 
 public class StartIntake extends CommandBase {
 
-    private Intake intake;
-    private  LimitSwitch lSwitch;
+	private static Intake intake;
+	private static LimitSwitch lSwitch;
 
-    public StartIntake(Intake sucker , LimitSwitch limitsSwitch ) {
-        intake = sucker;
-        lSwitch = limitsSwitch;
-        addRequirements(intake,lSwitch);
-    }
+	public StartIntake(Intake sucker , LimitSwitch limitsSwitch ) {
+		intake = sucker;
+		lSwitch = limitsSwitch;
+		addRequirements(intake,lSwitch);
+	}
+
+	@Override
+	public void initialize() {
+		intake.setVoltage(8);
+	}
+
+	public void execute() {  
+		if(lSwitch.get()){
+			intake.stop();
+			cancel();
+
+		}
+	}
+
+
 }
