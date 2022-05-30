@@ -7,10 +7,11 @@ import frc.robot.subsystems.LimitSwitch;
 public class StartIntake extends CommandBase {
 
     private Intake intake;
-    private  LimitSwitch switch;
+    private  LimitSwitch lSwitch;
 
-    public StartIntake(Intake sucker  LimitSwitch switch ) {
+    public StartIntake(Intake sucker , LimitSwitch limitsSwitch ) {
         intake = sucker;
-        lSwitch 
+        lSwitch = limitsSwitch;
+        addRequirements(intake,lSwitch);
     }
 }
