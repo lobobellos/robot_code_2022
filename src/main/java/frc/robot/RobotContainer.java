@@ -8,7 +8,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
+import frc.robot.commands.hook.*;
+
 import frc.robot.subsystems.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -24,10 +27,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase = new DriveBase();
   private final Climber climber = new Climber();
+  private final Limelight limeLight = new Limelight();
 
   private final RaiseHook raiseHook = new RaiseHook(climber);
   private final LowerHook lowerHook = new LowerHook(climber);
   private final StopHook stopHook = new StopHook(climber);
+
+  private final AlignBase alignBase = new AlignBase(driveBase, limeLight);
 
   public Joystick stick = new Joystick(0);
 
@@ -50,10 +56,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(stick, 4).whenHeld(raiseHook);
-    new JoystickButton(stick, 5).whenHeld(lowerHook);
+    new JoystickButton(stick, 4).whenHeld(raiseHook,true);
+    new JoystickButton(stick, 5).whenHeld(lowerHook,true);
     new JoystickButton(stick, 4).whenReleased(stopHook);
     new JoystickButton(stick, 5).whenReleased(stopHook);
+    new JoystickButton(stick, 1).whenPressed(alignBase);
   }
 
   /**
