@@ -12,7 +12,7 @@ public class Usonic extends SubsystemBase{
 		Ultrasonic.setAutomaticMode(true);
     }
 
-    double get(){
+    public double get(){
         return uSonic.getRangeInches();
     }
 }
