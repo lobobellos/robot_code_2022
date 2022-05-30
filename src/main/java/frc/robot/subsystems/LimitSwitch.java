@@ -11,10 +11,10 @@ public class LimitSwitch extends SubsystemBase {
 
     
 
-    Boolean get(){
+    public Boolean get(){
         return limitSwitch.get();
     }
-    Boolean getPressed(){
+    public Boolean getPressed(){
         return (!lastState && limitSwitch.get());
     }
 
