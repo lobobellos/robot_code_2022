@@ -35,7 +35,7 @@ public class AlignBase extends CommandBase {
               driveBase.driveCartesian(0.0, 0.0, -0.5, 0.0);
             }
         }else{
-            end(falsecancel(););
+            end(false);
         }
     }
 
