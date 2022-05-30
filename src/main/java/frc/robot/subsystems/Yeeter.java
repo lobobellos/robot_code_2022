@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Shooter extends SubsystemBase {
+public class Yeeter extends SubsystemBase {
     public Spark shooterM = new Spark(Constants.mainShooterChannel);
     public Spark shooterT = new Spark(Constants.topShooterChannel);
 
