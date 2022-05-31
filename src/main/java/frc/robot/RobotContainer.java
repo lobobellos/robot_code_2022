@@ -28,10 +28,14 @@ public class RobotContainer {
   private final DriveBase driveBase = new DriveBase();
   private final Climber climber = new Climber();
   private final Limelight limeLight = new Limelight();
+  private final Intake intake = new Intake();
+  private final LimitSwitch lSwitch = new LimitSwitch();
 
   private final RaiseHook raiseHook = new RaiseHook(climber);
   private final LowerHook lowerHook = new LowerHook(climber);
   private final StopHook stopHook = new StopHook(climber);
+
+  private final StartIntake startIntake =new StartIntake(intake, lSwitch);
 
   private final AlignBase alignBase = new AlignBase(driveBase, limeLight);
 
@@ -41,7 +45,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     driveBase.setDefaultCommand(new RunCommand(()->
-    driveBase.driveCartesian(stick.getY(), stick.getX(), stick.getZ(), ((-stick.getThrottle())+1.7)/2.7)
+    driveBase.driveCartesian(-stick.getY(), stick.getX(), stick.getZ(), ((-stick.getThrottle())+1.7)/2.7)
     ,driveBase));
     
 
@@ -60,7 +64,7 @@ public class RobotContainer {
     new JoystickButton(stick, 5).whenHeld(lowerHook,true);
     new JoystickButton(stick, 4).whenReleased(stopHook);
     new JoystickButton(stick, 5).whenReleased(stopHook);
-    new JoystickButton(stick, 1).whenPressed(alignBase);
+    new JoystickButton(stick, 1).whenPressed(startIntake);
   }
 
   /**
