@@ -20,12 +20,13 @@ public class StartIntake extends CommandBase {
 		intake.setVoltage(8);
 	}
 
-	public void execute() {  
-		if(lSwitch.get()){
-			intake.stop();
-			cancel();
 
-		}
+	public void end(){
+		intake.stop();
+	}
+
+	public boolean isFinished(){
+		return lSwitch.get();
 	}
 
 
