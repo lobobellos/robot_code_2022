@@ -7,10 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.*;
-import frc.robot.commands.IntakeBalls.StartIntake;
-import frc.robot.commands.alignAndShoot.AlignAndShoot;
 
+import frc.robot.commands.IntakeBalls.IntakeBalls;
+import frc.robot.commands.alignAndShoot.AlignAndShoot;
 import frc.robot.commands.hook.*;
 
 import frc.robot.subsystems.*;
@@ -33,13 +32,14 @@ public class RobotContainer {
   private final Limelight limeLight = new Limelight();
   private final Intake intake = new Intake();
   private final LimitSwitch lSwitch = new LimitSwitch();
+  private final Yeeter shooter = new Yeeter();
 
   private final RaiseHook raiseHook = new RaiseHook(climber);
   private final LowerHook lowerHook = new LowerHook(climber);
   private final StopHook stopHook = new StopHook(climber);
 
-  private final StartIntake startIntake =new StartIntake(intake, lSwitch);
-  private final AlignAndShoot alignAndShoot = new AlignAndShoot(driveBase,intake,limeLight);
+  private final IntakeBalls intakeBalls =new IntakeBalls(intake, lSwitch, shooter);
+  private final AlignAndShoot alignAndShoot = new AlignAndShoot(driveBase,intake,limeLight,shooter);
 
 
   public Joystick stick = new Joystick(0);
@@ -67,7 +67,7 @@ public class RobotContainer {
     new JoystickButton(stick, 5).whenHeld(lowerHook,true);
     new JoystickButton(stick, 4).whenReleased(stopHook);
     new JoystickButton(stick, 5).whenReleased(stopHook);
-    new JoystickButton(stick, 1).whenPressed(startIntake);
+    new JoystickButton(stick, 1).whenPressed(intakeBalls);
     new JoystickButton(stick, 2).whenPressed(alignAndShoot);
   }
 
