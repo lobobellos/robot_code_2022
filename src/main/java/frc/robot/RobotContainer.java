@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.commands.IntakeBalls.StartIntake;
-import frc.robot.commands.alignAndShoot.AlignBase;
+import frc.robot.commands.alignAndShoot.AlignAndShoot;
+
 import frc.robot.commands.hook.*;
 
 import frc.robot.subsystems.*;
@@ -38,8 +39,8 @@ public class RobotContainer {
   private final StopHook stopHook = new StopHook(climber);
 
   private final StartIntake startIntake =new StartIntake(intake, lSwitch);
+  private final AlignAndShoot alignAndShoot = new AlignAndShoot(driveBase,intake,limeLight);
 
-  private final AlignBase alignBase = new AlignBase(driveBase, limeLight);
 
   public Joystick stick = new Joystick(0);
 
@@ -67,6 +68,7 @@ public class RobotContainer {
     new JoystickButton(stick, 4).whenReleased(stopHook);
     new JoystickButton(stick, 5).whenReleased(stopHook);
     new JoystickButton(stick, 1).whenPressed(startIntake);
+    new JoystickButton(stick, 2).whenPressed(alignAndShoot);
   }
 
   /**
