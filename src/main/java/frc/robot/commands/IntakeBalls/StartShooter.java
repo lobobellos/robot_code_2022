@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.IntakeBalls;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Yeeter;
