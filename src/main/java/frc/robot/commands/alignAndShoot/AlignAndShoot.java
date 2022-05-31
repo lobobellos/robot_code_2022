@@ -29,7 +29,7 @@ public class AlignAndShoot extends SequentialCommandGroup {
         addRequirements(drivebase,intake,limelight,shooter);
 
         addCommands(
-            new AlignBase(drivebase, limelight),
+            //new AlignBase(drivebase, limelight),
             new SwallowBalls(intake),
             new InstantCommand(
                 ()->shooter.stopAll()
