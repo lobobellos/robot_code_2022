@@ -23,4 +23,9 @@ public class Yeeter extends SubsystemBase {
     public void stopT(){
         shooterT.stopMotor();
     }
+
+    public void stopAll(){
+        shooterT.stopMotor();
+        shooterM.stopMotor();
+    }
 }
