@@ -1,4 +1,4 @@
-package frc.robot.commands.alignAndShoot;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Yeeter;
