@@ -7,7 +7,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Yeeter;
 
-public class IntakeAndShoot extends SequentialCommandGroup {
+public class AlignAndShoot extends SequentialCommandGroup {
 
     //subsystems
     private DriveBase drivebase;
@@ -15,14 +15,14 @@ public class IntakeAndShoot extends SequentialCommandGroup {
     private Yeeter shooter;
     private Limelight limelight;
 
-    //commands
-    private StartIntake startIntake;
-    private AlignBase alignBase = new AlignBase(drivebase, limelight);
+    
 
-    public IntakeAndShoot(){
+    public AlignAndShoot(){
 
 
-        addCommands(startIntake.andThen(alignBase));
+        addCommands(
+            new AlignBase(drivebase, limelight)
+        );
     }
     
     
