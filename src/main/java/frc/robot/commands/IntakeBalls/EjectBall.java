@@ -17,13 +17,15 @@ public class EjectBall extends WaitCommand {
 
 
     public void initialize(){
+        super.initialize();
+
         intake.setVoltage(-8);
     }
+
+    public void execute(){}
 
     public void end(boolean interupted){
 
 		intake.stop();
-        intake.setVoltage(0.0);
 	}
-    
 }
