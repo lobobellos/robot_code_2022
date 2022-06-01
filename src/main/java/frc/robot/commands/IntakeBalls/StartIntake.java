@@ -18,10 +18,12 @@ public class StartIntake extends CommandBase {
 	@Override
 	public void initialize() {
 		intake.setVoltage(8);
+		System.out.println("shooter started");
 	}
 
 
-	public void end(){
+	public void end(boolean interupted){
+
 		intake.stop();
 	}
 
