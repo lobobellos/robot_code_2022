@@ -20,8 +20,10 @@ public class EjectBall extends WaitCommand {
         intake.setVoltage(-8);
     }
 
-    public void end(boolean i){
-        intake.stop();
-    }
+    public void end(boolean interupted){
+
+		intake.stop();
+        intake.setVoltage(0.0);
+	}
     
 }
