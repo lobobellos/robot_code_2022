@@ -28,8 +28,8 @@ public class StartShooter extends WaitCommand{
 
 
 
-    public void end(){
-
+    public void end(boolean interupted){
+        
     }
     
 }
