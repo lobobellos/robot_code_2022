@@ -25,9 +25,7 @@ public class SwallowBalls extends WaitCommand {
         
     }
 
-    public void execute(){
-        System.out.println(super.m_timer.get());
-    }
+    public void execute(){}
     
     public void end(boolean interupted){
         intake.stop();
