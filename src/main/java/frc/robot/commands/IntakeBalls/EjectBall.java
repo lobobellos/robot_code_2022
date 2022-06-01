@@ -8,7 +8,7 @@ public class EjectBall extends WaitCommand {
     private Intake intake;
 
     public EjectBall(Intake ntake){
-        super(0.5);
+        super(0.25);
 
         intake = ntake;
 
