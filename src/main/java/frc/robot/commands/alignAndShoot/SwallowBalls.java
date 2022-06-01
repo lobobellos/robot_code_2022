@@ -24,8 +24,12 @@ public class SwallowBalls extends WaitCommand {
         intake.setVoltage(8);
         
     }
+
+    public void execute(){
+        System.out.println(super.m_timer.get());
+    }
     
-    public void end(){
+    public void end(boolean interupted){
         intake.stop();
         shooter.stopAll();
     }
