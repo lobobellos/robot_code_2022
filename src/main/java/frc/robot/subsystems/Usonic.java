@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Usonic extends SubsystemBase{
-    Ultrasonic uSonic = new Ultrasonic(Constants.ultrasonicOutputChannel, Constants.ultrasonicInputChannel);
+    private static Ultrasonic uSonic = new Ultrasonic(Constants.ultrasonicOutputChannel, Constants.ultrasonicInputChannel);
 
     public Usonic(){
         uSonic.setEnabled(true);
