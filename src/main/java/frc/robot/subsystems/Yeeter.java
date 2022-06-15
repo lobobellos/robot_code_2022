@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Yeeter extends SubsystemBase {
-    public static Spark shooterM = new Spark(Constants.mainShooterChannel);
-    public static Spark shooterT = new Spark(Constants.topShooterChannel);
+    private static Spark shooterM = new Spark(Constants.mainShooterChannel);
+    private static Spark shooterT = new Spark(Constants.topShooterChannel);
 
     public void setVoltageM(double voltage){
         shooterM.setVoltage(voltage);
