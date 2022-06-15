@@ -7,7 +7,6 @@ import frc.robot.Constants;
 public class Intake extends SubsystemBase{
     Spark intake = new Spark(Constants.intakeLeftChannel);
 
-
     public Intake(){
         intake.setInverted(true);
     }
@@ -20,6 +19,4 @@ public class Intake extends SubsystemBase{
         intake.stopMotor();
         intake.setVoltage(0);
     }
-
-
 }   
