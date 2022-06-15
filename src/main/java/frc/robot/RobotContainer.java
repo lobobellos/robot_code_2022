@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import frc.robot.commands.IntakeBalls.IntakeBalls;
 import frc.robot.commands.alignAndShoot.AlignAndShoot;
+import frc.robot.commands.alignAndShoot.SwallowBalls;
 import frc.robot.commands.hook.*;
 
 import frc.robot.subsystems.*;
@@ -17,6 +18,8 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -40,6 +43,8 @@ public class RobotContainer {
 
   private final IntakeBalls intakeBalls =new IntakeBalls(intake, lSwitch, shooter);
   private final AlignAndShoot alignAndShoot = new AlignAndShoot(driveBase,intake,limeLight,shooter);
+
+  private final SwallowBalls swallowBalls = new SwallowBalls(intake, shooter);
 
 
   public Joystick stick = new Joystick(0);
@@ -78,6 +83,19 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new InstantCommand(()->System.out.println("auto command"));
+    return new SequentialCommandGroup(
+      //drive back for a second and then drive back in
+      new InstantCommand(()->{driveBase.driveCartesian(-1, 0, 0, 1);},driveBase),
+      new WaitCommand(1),
+      new InstantCommand(()->{driveBase.driveCartesian(1, 0, 0, 1);},driveBase),
+      new WaitCommand(1),
+      new InstantCommand(()->{driveBase.driveCartesian(0, 0, 0, 0);},driveBase),
+      //get shooters up to speed
+      new InstantCommand(()->{shooter.setVoltageM(7);},shooter),
+      new InstantCommand(()->{shooter.setVoltageT(7);},shooter),
+      new WaitCommand(2),
+      //shoot the ball
+      swallowBalls
+    );
   }
 }
