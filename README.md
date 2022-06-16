@@ -10,10 +10,10 @@ readme updated 6/15/22
 
 |motor|port|
 |---|---|
-|RR Drive|0|
-|FR Drive|1|
-|Fl Drive|2|
-|RL Drive|3|
+|RearRight Drive|0|
+|FrontRight Drive|1|
+|FrontLeft Drive|2|
+|RearLeft Drive|3|
 |Main Yeeter|4|
 |Intake|5|
 |Top Yeeter|6|
