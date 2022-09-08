@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.MathUtil;
 
 
 public class DriveBase extends SubsystemBase {
@@ -26,6 +27,8 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void driveCartesian(double y,double x,double z,double t){
-    m_robotDrive.driveCartesian(y, x, z,0.0);
+
+
+    m_robotDrive.driveCartesian(y, x, MathUtil.applyDeadband(z, 0.35),0.0);
   }
 }
