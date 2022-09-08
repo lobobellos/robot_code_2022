@@ -7,7 +7,7 @@ public class StopHook extends InstantCommand{
 
     public StopHook(Climber climb){
         super(()->
-      climb.lower()
+      climb.stop()
       ,climb);
     }
 }
