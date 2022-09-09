@@ -19,8 +19,8 @@ public class SwallowBalls extends WaitCommand {
 
     public void initialize(){
         super.initialize();
-        shooter.setVoltageM(8);
-        shooter.setVoltageT(8);
+        shooter.setVoltageM(7);
+        shooter.setVoltageT(7);
         intake.setVoltage(8);
         
     }
