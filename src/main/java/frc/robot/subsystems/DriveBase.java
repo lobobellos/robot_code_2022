@@ -27,8 +27,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void driveCartesian(double y,double x,double z,double t){
-
-
     m_robotDrive.driveCartesian(y, x, MathUtil.applyDeadband(z, 0.35),0.0);
   }
 }
