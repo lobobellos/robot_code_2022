@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -68,12 +69,20 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(stick, 4).whenHeld(raiseHook,true);
-    new JoystickButton(stick, 5).whenHeld(lowerHook,true);
-    new JoystickButton(stick, 4).whenReleased(stopHook);
-    new JoystickButton(stick, 5).whenReleased(stopHook);
-    new JoystickButton(stick, 1).whenPressed(intakeBalls);
-    new JoystickButton(stick, 2).whenPressed(alignAndShoot);
+    ((Trigger) new JoystickButton(stick, 4))
+    .whileTrue(raiseHook)
+    .onFalse(stopHook);
+    
+    ((Trigger)  new JoystickButton(stick, 5))
+    .whileTrue(lowerHook)
+    .onFalse(stopHook);
+
+
+    ( (Trigger) new JoystickButton(stick, 1))
+    .onTrue(intakeBalls);
+    
+    ( (Trigger) new JoystickButton(stick, 2))
+    .onTrue(alignAndShoot);
   }
 
   /**
