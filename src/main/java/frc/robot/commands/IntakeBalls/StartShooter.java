@@ -26,10 +26,7 @@ public class StartShooter extends WaitCommand{
         yeeter.setVoltageT(8);
     }
 
-
-
     public void end(boolean interupted){
-        
+        yeeter.stopAll();
     }
-    
 }
