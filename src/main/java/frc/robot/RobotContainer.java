@@ -5,9 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-
 import frc.robot.commands.IntakeBalls.IntakeBalls;
 import frc.robot.commands.alignAndShoot.AlignAndShoot;
 import frc.robot.commands.alignAndShoot.SwallowBalls;
@@ -20,8 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,13 +45,22 @@ public class RobotContainer {
   private final SwallowBalls swallowBalls = new SwallowBalls(intake, shooter);
 
 
-  public Joystick stick = new Joystick(0);
+  private CommandXboxController xboxController;
 
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+
+    xboxController = new CommandXboxController(1);
+
     driveBase.setDefaultCommand(new RunCommand(()->
-    driveBase.driveCartesian(-stick.getY(), stick.getX(), stick.getZ(), ((-stick.getThrottle())+1.7)/2.7)
+    driveBase.driveCartesian(
+      -xboxController.getRightY(),
+      xboxController.getRightX(),
+      -xboxController.getLeftTriggerAxis() + xboxController.getRightTriggerAxis(),
+      1
+    )
     ,driveBase));
     
 
@@ -69,20 +75,21 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    ((Trigger) new JoystickButton(stick, 4))
+
+    xboxController.button(6)
     .whileTrue(raiseHook)
     .onFalse(stopHook);
     
-    ((Trigger)  new JoystickButton(stick, 5))
+    xboxController.button(7)
     .whileTrue(lowerHook)
     .onFalse(stopHook);
 
-
-    ( (Trigger) new JoystickButton(stick, 1))
+    xboxController.a()
     .onTrue(intakeBalls);
     
-    ( (Trigger) new JoystickButton(stick, 2))
+    xboxController.b()
     .onTrue(alignAndShoot);
+    
   }
 
   /**
